@@ -109,6 +109,33 @@ csex <- which(colnames(cmx)==choose[ch])
 
 pop_ch$mx <- cmx[,csex][o1]
 
+
+library(viridis)
+library(classInt)
+colpal <- magma(100, alpha = 1, begin = 0.1, end = 1)
+# Choose bins
+bins <- c(seq(0,0.05,0.05/50), seq(0.055,0.2,0.145/20),seq(0.2,1,0.8/28)[-1])
+# Assigns color according to fixed breaks categorization 
+catg <- classIntervals(pop_ch$mx, fixedBreaks=bins, 
+                       style = "fixed")
+color <- findColours(catg, colpal)
+
+pop_ch$color <- color
+
+color_matrix <-
+  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
+  select(Cohort, Age, color) %>%
+  spread(Age, color) %>%
+  as.matrix()
+
+# Cohorts and ages
+coh <- as.numeric(unique(color_matrix[,"Cohort"]))
+ages <- as.numeric(attr(color_matrix, "dimnames")[[2]][-1])
+
+# Loop over cohorts and ages
+n_coh <- length(coh)
+n_ages <- length(ages)
+
 # Functions
 # Polygon
 shrink_fun <- function(x, shrink, x_value = TRUE) {
@@ -125,35 +152,10 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-# Cohorts and ages
-coh <- unique(pop_ch$Cohort)
-ages <- unique(pop_ch$Age)
-
-
-# Loop over cohorts and ages
-n_coh <- length(coh)
-n_ages <- length(ages)
-
 # shrink <- 1 no shrinking
 # shrink <- 0 just  line
 # Defined this as a vector for each cohort
 shrink <- seq(0.9,0,by=-0.008)
-
-# Define color
-library(viridis)
-library(classInt)
-
-colpal <- magma(100, alpha = 1, begin = 0.1, end = 1)
-bins <- c(seq(0,0.05,0.05/50),seq(0.055,0.2,0.145/20),seq(0.2,1,0.8/28)[-1])
-cls <- rnorm(n_coh * n_ages, mean = 0.5, sd = 0.09)
-
-catg <- classIntervals(cls, fixedBreaks=bins, 
-                       style = "fixed")
-
-color <- findColours(catg,colpal)
-
-color <- matrix(color, n_coh, n_ages)
-
 
 #tiff(file=paste("Shrink_test.tif"),width = 9600, height = 4800, res=300, 
 #     compression="lzw")
@@ -163,8 +165,11 @@ plot(x = c(coh[1], coh[length(coh)]),
      xlab="Year",
      ylab="Age")
 
-# Loop for cohorts
-for (i in 1:2) {
+# You sort of fixed the colors but you still need to figure out how to change
+# the border color of the polygons and the first line of colors.
+
+# Loop for cohorts 
+for (i in 1:coh) {
   # In order to fixate point 2 which we are 
   # are not shrinking
   mid_x <- seq(coh[i],coh[i]+n_ages,1)
@@ -175,21 +180,19 @@ for (i in 1:2) {
     # Lower Lexis triangle
     x <- c(mid_x[j],mid_x[j]+1, mid_x[j]+1, mid_x[j]+1)
     y <- c(mid_y[j], mid_y[j], mid_y[j],mid_y[j]+1)
-    
+
     x_sh <- shrink_fun(x, shrink[j])
     y_sh <- shrink_fun(y, shrink[j], x_value = F)
-    
-    polygon(x_sh, y_sh, lty=0,col=color[i, j])
-    
+
+    polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
+
     # Upper Lexis triangle year + 1
     x_inv <- c(x[2], x[2] , x[2] ,x[2] + (x[2] - x[1]))
     y_inv <- c(y[1],y[4],y[4],y[4])
-    
+
     x_inv_sh <- shrink_fun(x_inv, shrink[j],x_value = F)
     y_inv_sh <- shrink_fun(y_inv, shrink[j])
-    
-    polygon(x_inv_sh, y_inv_sh, lty=0, col=color[i, j])
+
+    polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
   }
 }
-
-# dev.off()
