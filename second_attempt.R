@@ -26,6 +26,7 @@ library(classInt)
 library(viridis)
 library(scales)
 library(extrafont)
+library(scales)
 
 
 ################################################################################
@@ -128,6 +129,14 @@ color_matrix <-
   spread(Age, color) %>%
   as.matrix()
 
+width_matrix <-
+  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
+  select(Cohort, Age, Pop) %>%
+  mutate(Pop = rescale(Pop, c(0, 2))) %>%
+  spread(Age, Pop) %>%
+  as.matrix()
+
+
 # Cohorts and ages
 coh <- as.numeric(unique(color_matrix[,"Cohort"]))
 ages <- as.numeric(attr(color_matrix, "dimnames")[[2]][-1])
@@ -152,47 +161,47 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-# shrink <- 1 no shrinking
-# shrink <- 0 just  line
-# Defined this as a vector for each cohort
-shrink <- seq(0.9,0,by=-0.008)
-
 #tiff(file=paste("Shrink_test.tif"),width = 9600, height = 4800, res=300, 
 #     compression="lzw")
+par(bg = "black", mar=c(5, 4, 4, 2),fig=c(0,1,0,1)) 
+
 plot(x = c(coh[1], coh[length(coh)]),
      y = c(ages[1], ages[length(ages)]),
-     col="transparent",
-     xlab="Year",
-     ylab="Age")
+     pch=20,
+     col="transparent", col.axis=alpha("grey95",0.75),
+     font.lab=2, cex.lab=1.2, xlab="Year", ylab="Age",
+     xlim=c(1750,2014), col.lab=alpha("grey95",0.75))
 
 # You sort of fixed the colors but you still need to figure out how to change
 # the border color of the polygons and the first line of colors.
 
-# Loop for cohorts 
-for (i in 1:coh) {
+# Loop for cohorts
+for (i in 1:n_coh) {
   # In order to fixate point 2 which we are 
   # are not shrinking
   mid_x <- seq(coh[i],coh[i]+n_ages,1)
   mid_y <- c(0:n_ages-1)
   
   # Loop for ages
-  for (j in 1:n_ages) {
+  for (j in 2:n_ages) {
     # Lower Lexis triangle
-    x <- c(mid_x[j],mid_x[j]+1, mid_x[j]+1, mid_x[j]+1)
+    x <- c(mid_x[j], mid_x[j]+1, mid_x[j]+1, mid_x[j]+1)
     y <- c(mid_y[j], mid_y[j], mid_y[j],mid_y[j]+1)
 
-    x_sh <- shrink_fun(x, shrink[j])
-    y_sh <- shrink_fun(y, shrink[j], x_value = F)
+    x_sh <- shrink_fun(x, width_matrix[i, j])
+    y_sh <- shrink_fun(y, width_matrix[i, j], x_value = F)
 
+    polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
 
     # Upper Lexis triangle year + 1
     x_inv <- c(x[2], x[2] , x[2] ,x[2] + (x[2] - x[1]))
     y_inv <- c(y[1],y[4],y[4],y[4])
 
-    x_inv_sh <- shrink_fun(x_inv, shrink[j],x_value = F)
-    y_inv_sh <- shrink_fun(y_inv, shrink[j])
+    x_inv_sh <- shrink_fun(x_inv, width_matrix[i, j], x_value = F)
+    y_inv_sh <- shrink_fun(y_inv, width_matrix[i, j])
 
+    polygon(x_inv_sh, y_inv_sh, lty=0, col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
   }
 }
