@@ -161,8 +161,13 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-#tiff(file=paste("Shrink_test.tif"),width = 9600, height = 4800, res=300, 
-#     compression="lzw")
+pdf(file="HMD_SWE_MALES4.pdf",width = 20, height = 7,family="Californian FB")
+png(file=paste("170115_HMD_SWE_",export[ch],"check.png",sep=""),
+    family="Californian FB", width = 10000, height = 3600, res=600)
+
+tiff(file=paste("170621_HMD_SWE_",export[ch],"with_grey_old.tif",sep=""),
+     family="Californian FB", width = 20000, height = 7200, res=1200,compression="lzw")
+
 par(bg = "black", mar=c(5, 4, 4, 2),fig=c(0,1,0,1)) 
 
 plot(x = c(coh[1], coh[length(coh)]),
@@ -171,6 +176,9 @@ plot(x = c(coh[1], coh[length(coh)]),
      col="transparent", col.axis=alpha("grey95",0.75),
      font.lab=2, cex.lab=1.2, xlab="Year", ylab="Age",
      xlim=c(1750,2014), col.lab=alpha("grey95",0.75))
+
+title(main=paste("Males"," (Sweden) - Cohort Mortality Rates",sep=""),
+      col.main=alpha("grey95",0.75))
 
 # You sort of fixed the colors but you still need to figure out how to change
 # the border color of the polygons and the first line of colors.
@@ -205,3 +213,25 @@ for (i in 1:n_coh) {
     polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
   }
 }
+
+abline(h=c(seq(0,100,10)),col=alpha("grey95",0.5),lty=2)
+abline(v=c(seq(1750,2010,10)),col=alpha("grey95",0.5),lty=2)
+op1 <- par(mar=c(0,0,0,0), fig=c(0.585,0.7,0.035,0.09), new = TRUE)
+# mtext("Cohort death rates",side=1,line=2,col=alpha("grey95",0.75))
+plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
+#text(0.5,0.5,"Cohort mortality rates (cmx)",col=alpha("grey95",0.75))
+op2 <- par(mar=c(0,0,0,0), fig=c(0.7,0.9,0.05,0.075), new = TRUE)
+plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
+lbi <- length(bins)-1
+for (i in 1:lbi) {
+  rect(bins[i],0,bins[i+1],1,lty=0,col=colpal[i])
+}
+rect(0,0,1,1,lty=1,border=alpha("grey95",0.75))
+op3 <- par(mar=c(0,0,0,0), fig=c(0.70,0.71,0.020,0.045), new = TRUE)
+plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
+text(0.68,0.5,sprintf("%1.0f",0),col=alpha("grey95",0.75))
+op3 <- par(mar=c(0,0,0,0), fig=c(0.885,0.905,0.020,0.045), new = TRUE)
+plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
+text(0.35,0.5,sprintf("%1.0f",1),col=alpha("grey95",0.75))
+
+dev.off()
