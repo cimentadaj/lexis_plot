@@ -27,7 +27,9 @@ library(viridis)
 library(scales)
 library(extrafont)
 library(scales)
-
+library(devtools)
+# install_github("timriffe/TR1/TR1/HMDHFDplus")
+library(HMDHFDplus)
 
 ################################################################################
 #                                                                              #
@@ -36,9 +38,34 @@ library(scales)
 ################################################################################ 
 
 # Load population data
-pop <- read.table("Population_SWE.csv",sep=",",header=TRUE,na.strings = ".")
-exp <- read.table("cExposures_1x1.csv",sep=",",header=TRUE,na.strings = ".")
-cmx <- read.table("cMx_1x1.csv",sep=",",header=TRUE,na.strings = ".")
+
+id <- read_rds("id")
+country <- "SWE"
+
+pop <-
+  readHMDweb(CNTRY = country,
+                  item = "Population",
+                  username = id[1],
+                  password = id[2]) %>%
+  select(Year, Age, Female1, Male1, Total1) %>%
+  rename(Female = Female1,
+         Male = Male1,
+         Total = Total1) %>%
+  arrange(Year, Age)
+
+exp <-
+  readHMDweb(CNTRY = country,
+             item = "cExposures_1x1",
+             username = id[1],
+             password = id[2]) %>%
+  select(-OpenInterval)
+
+cmx <-
+  readHMDweb(CNTRY = country,
+             item = "cMx_1x1",
+             username = id[1],
+             password = id[2]) %>%
+  select(-OpenInterval)
 
 # Reshape into long format
 pop_long <- reshape(pop, varying=names(pop)[c(3:5)],
@@ -46,19 +73,18 @@ pop_long <- reshape(pop, varying=names(pop)[c(3:5)],
                     timevar="Sex",direction="long")
 
 # Define row names
-row.names(pop_long) <- c(1:nrow(pop_long))
+row.names(pop_long) <- 1:nrow(pop_long)
 
 # Turn age into a numeric variable
 pop_long$Age <- as.numeric(as.character(pop_long$Age))
 pop_long$Age[is.na(pop_long$Age)] <- 110
 
 # Subset dataset so that it only includes ages up to 100
-pop_long <-subset(pop_long,pop_long$Age<=100,select=-id)
+pop_long <- subset(pop_long,pop_long$Age<=100, select= -id)
 head(pop_long)
 
 # Derive cohort data (Population on January 1st)
 pop_long$Cohort <- pop_long$Year-pop_long$Age-1
-
 
 choose <- c("Male","Female")
 export <- c("MALES","FEMALES")
@@ -67,8 +93,14 @@ title <- c("Males","Females")
 # Choose Male (1) of Female (2) 
 ch <- 1
 
-# Choose data from 1750 on
-pop_ch <- pop_long[pop_long$Cohort > 1750 & pop_long$Sex==choose[ch], ]
+# Choose data from time1 to time2
+time <- sort(unique(pop_long$Year))
+time1 <- time[1]
+time2 <- time[length(time)]
+
+pop_ch <-
+  pop_long %>%
+  filter(Cohort >= time1, Cohort <= time2, Sex == choose[ch])
 
 # Derive the maximum size that was ever recorded for a cohort
 # Split by cohort
@@ -76,8 +108,6 @@ bycoh <- split(pop_ch$Pop,pop_ch$Cohort)
 
 # Derive maximum
 maxcoh <- unlist(lapply(bycoh,max))
-plot(as.numeric(names(maxcoh)),maxcoh,type="l",
-     xlab="Maximum population size recorded for cohort",ylab="Cohort")
 
 # Match maximum size information to cohort
 o <- match(pop_ch$Cohort,names(maxcoh))
@@ -100,7 +130,6 @@ lwd_low <- cohmax
 # Turn age in cmx into a numeric variable
 cmx$Age <- as.numeric(as.character(cmx$Age))
 cmx$Age[is.na(cmx$Age)] <- 110
-
 
 matchvecmx <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
 matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
@@ -161,12 +190,12 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-pdf(file="HMD_SWE_MALES4.pdf",width = 20, height = 7,family="Californian FB")
-png(file=paste("170115_HMD_SWE_",export[ch],"check.png",sep=""),
-    family="Californian FB", width = 10000, height = 3600, res=600)
-
-tiff(file=paste("170621_HMD_SWE_",export[ch],"with_grey_old.tif",sep=""),
-     family="Californian FB", width = 20000, height = 7200, res=1200,compression="lzw")
+# pdf(file="HMD_SWE_MALES4.pdf",width = 20, height = 7,family="Californian FB")
+# png(file=paste("170115_HMD_SWE_",export[ch],"check.png",sep=""),
+#     family="Californian FB", width = 10000, height = 3600, res=600)
+# 
+# tiff(file=paste("170621_HMD_SWE_",export[ch],"with_grey_old.tif",sep=""),
+#      family="Californian FB", width = 20000, height = 7200, res=1200,compression="lzw")
 
 par(bg = "black", mar=c(5, 4, 4, 2),fig=c(0,1,0,1)) 
 
@@ -175,10 +204,10 @@ plot(x = c(coh[1], coh[length(coh)]),
      pch=20,
      col="transparent", col.axis=alpha("grey95",0.75),
      font.lab=2, cex.lab=1.2, xlab="Year", ylab="Age",
-     xlim=c(1750,2014), col.lab=alpha("grey95",0.75))
+     xlim=c(time1, time2), col.lab=alpha("grey95",0.75))
 
-title(main=paste("Males"," (Sweden) - Cohort Mortality Rates",sep=""),
-      col.main=alpha("grey95",0.75))
+# title(main=paste("Males"," (Sweden) - Cohort Mortality Rates",sep=""),
+#       col.main=alpha("grey95",0.75))
 
 # You sort of fixed the colors but you still need to figure out how to change
 # the border color of the polygons and the first line of colors.
@@ -234,4 +263,4 @@ op3 <- par(mar=c(0,0,0,0), fig=c(0.885,0.905,0.020,0.045), new = TRUE)
 plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
 text(0.35,0.5,sprintf("%1.0f",1),col=alpha("grey95",0.75))
 
-dev.off()
+# dev.off()
