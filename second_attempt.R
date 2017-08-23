@@ -322,3 +322,11 @@ smooth_calculator <- function(row_unique, col_unique, counts, exposure) {
 
 smooth_calculator(ages_unique, years_unique, death_matrix, exp_matrix) %>%
   .[1:5, 1:5]
+
+# The next thing to do is incorporate this smoothe data in the previous plot. This
+# shouldn't be that hard given that the data is in the same format (matrix, age x year)
+# as in the previous plot.
+
+# Other thing to do: link both smoothed and previous analysis
+# to common variables so that both things are estimated from the same
+# variables.
