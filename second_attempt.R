@@ -13,7 +13,6 @@ rm(list=ls(all=TRUE))
 # "geosphere","classInt","RColorBrewer"))
 
 # Load libraries
-library(tidyverse)
 library(lattice)
 library(spdep)
 library(rgdal)
@@ -30,6 +29,8 @@ library(scales)
 library(devtools)
 # install_github("timriffe/TR1/TR1/HMDHFDplus")
 library(HMDHFDplus)
+library(MortalitySmooth)
+library(tidyverse)
 
 ################################################################################
 #                                                                              #
@@ -40,7 +41,7 @@ library(HMDHFDplus)
 # Load population data
 
 id <- read_rds("id")
-country <- "SWE"
+country <- "CAN"
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -264,3 +265,60 @@ plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
 text(0.35,0.5,sprintf("%1.0f",1),col=alpha("grey95",0.75))
 
 # dev.off()
+
+## selected data
+library(ROMIplot)
+country <- "USA"
+
+death <-
+  readHMDweb(CNTRY = country,
+             item = "Deaths_1x1",
+             username = id[1],
+             password = id[2]) %>%
+  select(Year, Age, Female, Male, Total) %>%
+  arrange(Year, Age)
+
+exp_death <-
+  readHMDweb(CNTRY = country,
+             item = "Exposures_1x1",
+             username = id[1],
+             password = id[2]) %>%
+  select(-OpenInterval)
+
+death_matrix <-
+  death %>%
+  select(Year, Age, Female) %>%
+  filter(between(Age, 0, 100), between(Year, 1950, 2011)) %>%
+  spread(Year, Female) %>%
+  as.matrix() %>%
+  .[, -1]
+rownames(death_matrix) <- 0:100
+
+exp_matrix <-
+  exp_death %>%
+  select(Year, Age, Female) %>%
+  filter(between(Age, 0, 100), between(Year, 1950, 2011)) %>%
+  spread(Year, Female) %>%
+  as.matrix() %>%
+  .[, -1]
+rownames(exp_matrix) <- 0:100
+
+ages_unique <- death_matrix %>% row.names %>% as.numeric
+years_unique <- death_matrix %>% colnames %>% as.numeric
+
+
+smooth_calculator <- function(row_unique, col_unique, counts, exposure) {
+
+  pre_smoothed <- Mort2Dsmooth(x=row_unique, y=col_unique,
+                        Z = counts, offset = log(exposure))
+  
+  mx <- pre_smoothed$fitted.values/exposure
+  mx.2 <- mx[, -1]
+  mx.1 <- mx[, -(ncol(mx))]
+  aai <- 100 * -log(mx.2/mx.1)
+  
+  aai
+}
+
+smooth_calculator(ages_unique, years_unique, death_matrix, exp_matrix) %>%
+  .[1:5, 1:5]
