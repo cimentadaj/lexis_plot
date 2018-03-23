@@ -117,17 +117,25 @@ pop_ch$Maxpop <- maxcoh[o]
 
 # Here I determine the linewidth for the upper lines
 # This should be improved
-factor <- 3
-popstand <- pop_ch$Pop/max(pop_ch$Pop)*factor
-lwd_up <- popstand
+
+# You can make the width of the line relative to either
+# a year, or a cohort
+
+# Chose a year if not each cohort pop is divided
+# by the maximum of that cohort:
+selected_year <- 1960
+
+if (!is.na(selected_year)) {
+  selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
+} else {
+  selected_year_max <- pop_ch$Maxpop
+}
+
+factor <- 0.95
+pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
 
 # Here I determine the linewidth for the lower lines
 # This should be improved
-popmax <- pop_ch$Maxpop/max(pop_ch$Pop)*factor
-lcoh <- length(unique(pop_ch$Cohort))
-cohmax <- maxcoh/max(pop_ch$Pop)*factor
-lwd_low <- cohmax
-
 # Match pop data to cmx data
 # Turn age in cmx into a numeric variable
 cmx$Age <- as.numeric(as.character(cmx$Age))
@@ -155,16 +163,18 @@ color <- findColours(catg, colpal)
 pop_ch$color <- color
 
 color_matrix <-
-  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
+  complete(pop_ch, Cohort, Age,
+           fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
   select(Cohort, Age, color) %>%
   spread(Age, color) %>%
   as.matrix()
 
 width_matrix <-
-  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
-  select(Cohort, Age, Pop) %>%
-  mutate(Pop = rescale(Pop, c(0, 2))) %>%
-  spread(Age, Pop) %>%
+  complete(pop_ch, Cohort, Age,
+           fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
+  select(Cohort, Age, relative_pop) %>%
+  # mutate(Pop = rescale(Pop, c(0, 2))) %>%
+  spread(Age, relative_pop) %>%
   as.matrix()
 
 
@@ -176,18 +186,28 @@ ages <- as.numeric(attr(color_matrix, "dimnames")[[2]][-1])
 n_coh <- length(coh)
 n_ages <- length(ages)
 
+color_matrix <- color_matrix[, -1]
+width_matrix <- width_matrix[, -1]
+
 # Functions
 # Polygon
 shrink_fun <- function(x, shrink, x_value = TRUE) {
   
   if(x_value) {
     xman <- x
-    xman[1] <- mean(x[1:2])-(x[2] - x[1])*(shrink/2)
-    xman[2] <- mean(x[1:2])+(x[2] - x[1])*(shrink/2)
+    xman[1] <- mean(x[1:2])-(shrink/2)
+    xman[2] <- mean(x[1:2])+(shrink/2)
+    
+    # xman[1] <- mean(x[1:2])-(x[2] - x[1])*(shrink/2)
+    # xman[2] <- mean(x[1:2])+(x[2] - x[1])*(shrink/2)
   } else {
     xman <- x
-    xman[3] <- mean(x[3:4])-(x[4] - x[3])*(shrink/2)
-    xman[4] <- mean(x[3:4])+(x[4] - x[3])*(shrink/2)
+    
+    xman[3] <- mean(x[3:4])-(shrink/2)
+    xman[4] <- mean(x[3:4])+(shrink/2)
+    
+    # xman[3] <- mean(x[3:4])-(x[4] - x[3])*(shrink/2)
+    # xman[4] <- mean(x[3:4])+(x[4] - x[3])*(shrink/2)
   }
   xman
 }
@@ -205,7 +225,7 @@ plot(x = c(coh[1], coh[length(coh)]),
      y = c(ages[1], ages[length(ages)]),
      pch=20,
      col="transparent", col.axis=alpha("grey95",0.75),
-     font.lab=2, cex.lab=1.2, xlab="Year", ylab="Age",
+     font.lab=1, cex.lab=1.2, xlab="Year", ylab="Age",
      xlim=c(time1, time2), col.lab=alpha("grey95",0.75))
 
 # title(main=paste("Males"," (Sweden) - Cohort Mortality Rates",sep=""),
@@ -214,22 +234,24 @@ plot(x = c(coh[1], coh[length(coh)]),
 # You sort of fixed the colors but you still need to figure out how to change
 # the border color of the polygons and the first line of colors.
 
+# color_matrix[which(is.na(color_matrix))] <- "gray93"
+
 # Loop for cohorts
 for (i in 1:n_coh) {
   # In order to fixate point 2 which we are 
   # are not shrinking
   mid_x <- seq(coh[i],coh[i]+n_ages,1)
-  mid_y <- c(0:n_ages-1)
+  mid_y <- c(0:(n_ages-1))
   
   # Loop for ages
-  for (j in 2:n_ages) {
+  for (j in 1:n_ages) {
     # Lower Lexis triangle
     x <- c(mid_x[j], mid_x[j]+1, mid_x[j]+1, mid_x[j]+1)
     y <- c(mid_y[j], mid_y[j], mid_y[j],mid_y[j]+1)
 
     x_sh <- shrink_fun(x, width_matrix[i, j])
     y_sh <- shrink_fun(y, width_matrix[i, j], x_value = F)
-
+    
     polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
 
@@ -246,7 +268,7 @@ for (i in 1:n_coh) {
 }
 
 abline(h=c(seq(0,100,10)),col=alpha("grey95",0.5),lty=2)
-abline(v=c(seq(1750,2010,10)),col=alpha("grey95",0.5),lty=2)
+abline(v=c(seq(min(coh),max(coh),10)),col=alpha("grey95",0.5),lty=2)
 op1 <- par(mar=c(0,0,0,0), fig=c(0.585,0.7,0.035,0.09), new = TRUE)
 # mtext("Cohort death rates",side=1,line=2,col=alpha("grey95",0.75))
 plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
