@@ -42,7 +42,7 @@ library(tidyverse)
 # Load population data
 
 id <- read_rds("id")
-country <- "CAN"
+country <- "SWE"
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -115,15 +115,14 @@ maxcoh <- unlist(lapply(bycoh,max))
 o <- match(pop_ch$Cohort,names(maxcoh))
 pop_ch$Maxpop <- maxcoh[o]
 
-# Here I determine the linewidth for the upper lines
-# This should be improved
+# Here I determine the linewidth
 
 # You can make the width of the line relative to either
 # a year, or a cohort
 
 # Chose a year if not each cohort pop is divided
 # by the maximum of that cohort:
-selected_year <- 1960
+selected_year <- NA
 
 if (!is.na(selected_year)) {
   selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
@@ -134,8 +133,6 @@ if (!is.na(selected_year)) {
 factor <- 0.95
 pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
 
-# Here I determine the linewidth for the lower lines
-# This should be improved
 # Match pop data to cmx data
 # Turn age in cmx into a numeric variable
 cmx$Age <- as.numeric(as.character(cmx$Age))
@@ -147,8 +144,7 @@ matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
 o1 <- match(matchvecpop,matchvecmx)
 csex <- which(colnames(cmx)==choose[ch]) 
 
-pop_ch$mx <- cmx[,csex][o1]
-
+pop_ch$mx <- rescale(cmx[,csex][o1], c(0, 1))
 
 library(viridis)
 library(classInt)
@@ -173,7 +169,7 @@ width_matrix <-
   complete(pop_ch, Cohort, Age,
            fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
   select(Cohort, Age, relative_pop) %>%
-  # mutate(Pop = rescale(Pop, c(0, 2))) %>%
+  # mutate(relative_pop = rescale(relative_pop, c(0, 2))) %>%
   spread(Age, relative_pop) %>%
   as.matrix()
 
