@@ -48,6 +48,7 @@ country <- "SWE"
 # width is relative to that cohorts
 # maximum pop
 selected_year <- NA
+factor <- 0.95
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -129,7 +130,6 @@ if (!is.na(selected_year)) {
   selected_year_max <- pop_ch$Maxpop
 }
 
-factor <- 0.95
 pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
 
 # popstand <- pop_ch$Pop/max(pop_ch$Pop)*factor
@@ -244,7 +244,8 @@ for (i in 1:n_coh) {
   # In order to fixate point 2 which we are
   # are not shrinking
   mid_x <- seq(coh[i],coh[i]+n_ages,1)
-  mid_y <- c(0:n_ages-1)
+  mid_y <- 0:n_ages
+  mid_y <- mid_y[-length(mid_y)]
   
   # Loop for ages
   for (j in 1:n_ages) {
@@ -253,8 +254,21 @@ for (i in 1:n_coh) {
     y <- c(mid_y[j], mid_y[j], mid_y[j],mid_y[j]+1)
     
     x_sh <- shrink_fun(x, width_matrix[i, j])
-    y_sh <- shrink_fun(y, width_matrix[i, j], x_value = F)
+    # subtract <- (x_sh %% 1)[1]
+    # x_sh <- x_sh + 1
+    # x_sh[1] <- x_sh[1] - subtract
+    # x_sh[2] <- x_sh[2] + subtract
     
+    # The bottom poligons were not matching 0 
+    # in the Y axis. This shrinkage makes sure that it does.
+    match_zero <- 0.20
+    
+    y_sh <- shrink_fun(y, width_matrix[i, j], x_value = F)
+    y_sh <- y_sh + match_zero
+    
+    # x_sh <- c(1751, 1752, 1752, 1752)
+    # y_sh <- c(0, 0, 1.975, 1.025)
+
     polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
     
@@ -263,15 +277,22 @@ for (i in 1:n_coh) {
     y_inv <- c(y[1],y[4],y[4],y[4])
     
     x_inv_sh <- shrink_fun(x_inv, width_matrix[i, j], x_value = F)
+    # x_inv_sh[3] <- x_inv_sh[3] - subtract
+    # x_inv_sh[4] <- x_inv_sh[4] + subtract
+    
     y_inv_sh <- shrink_fun(y_inv, width_matrix[i, j])
+    y_inv_sh <- y_inv_sh + match_zero
+    
+    # x_inv_sh <- c(1752, 1752, 1752, 1753)
+    # y_inv_sh <- c(0.975, 1.025, 1, 1)
     
     polygon(x_inv_sh, y_inv_sh, lty=0, col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
   }
 }
-
-abline(h=c(seq(0,100,10)),col=alpha("grey95",0.5),lty=2)
-abline(v=c(seq(1750,2010,10)),col=alpha("grey95",0.5),lty=2)
+r_age <- range(ages)
+abline(h=c(seq(r_age[1],r_age[2],10)),col=alpha("grey95",0.5),lty=2)
+abline(v=c(seq(time1,time2,10)),col=alpha("grey95",0.5),lty=2)
 op1 <- par(mar=c(0,0,0,0), fig=c(0.585,0.7,0.035,0.09), new = TRUE)
 # mtext("Cohort death rates",side=1,line=2,col=alpha("grey95",0.75))
 plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
