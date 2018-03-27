@@ -44,7 +44,10 @@ library(tidyverse)
 id <- read_rds("id")
 country <- "SWE"
 # For width reference
-selected_year <- 1960
+# If it's set to NA, the
+# width is relative to that cohorts
+# maximum pop
+selected_year <- NA
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -119,7 +122,12 @@ pop_ch$Maxpop <- maxcoh[o]
 
 # Here I determine the linewidth
 # from selected_year, which is at the beginning
-selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
+
+if (!is.na(selected_year)) {
+  selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
+} else {
+  selected_year_max <- pop_ch$Maxpop
+}
 
 factor <- 0.95
 pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
