@@ -41,8 +41,9 @@ library(tidyverse)
 
 # Load population data
 
-id <- read_rds("id")
-country <- "SWE"
+# replace with your human mortaility accounty
+id <- c("email", "password")
+country <- "DNK"
 # For width reference
 # If it's set to NA, the
 # width is relative to that cohorts
