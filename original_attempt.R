@@ -43,6 +43,8 @@ library(tidyverse)
 
 id <- read_rds("id")
 country <- "SWE"
+# For width reference
+selected_year <- 1960
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -115,18 +117,22 @@ maxcoh <- unlist(lapply(bycoh,max))
 o <- match(pop_ch$Cohort,names(maxcoh))
 pop_ch$Maxpop <- maxcoh[o]
 
-# Here I determine the linewidth for the upper lines
-# This should be improved
-factor <- 3
-popstand <- pop_ch$Pop/max(pop_ch$Pop)*factor
-lwd_up <- popstand
+# Here I determine the linewidth
+# from selected_year, which is at the beginning
+selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
 
-# Here I determine the linewidth for the lower lines
-# This should be improved
-popmax <- pop_ch$Maxpop/max(pop_ch$Pop)*factor
-lcoh <- length(unique(pop_ch$Cohort))
-cohmax <- maxcoh/max(pop_ch$Pop)*factor
-lwd_low <- cohmax
+factor <- 0.95
+pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
+
+# popstand <- pop_ch$Pop/max(pop_ch$Pop)*factor
+# lwd_up <- popstand
+# 
+# # Here I determine the linewidth for the lower lines
+# # This should be improved
+# popmax <- pop_ch$Maxpop/max(pop_ch$Pop)*factor
+# lcoh <- length(unique(pop_ch$Cohort))
+# cohmax <- maxcoh/max(pop_ch$Pop)*factor
+# lwd_low <- cohmax
 
 # Match pop data to cmx data
 # Turn age in cmx into a numeric variable
@@ -141,6 +147,7 @@ csex <- which(colnames(cmx)==choose[ch])
 
 pop_ch$mx <- cmx[,csex][o1]
 
+pop_ch <- filter(pop_ch, mx <= 1)
 
 library(viridis)
 library(classInt)
@@ -155,16 +162,16 @@ color <- findColours(catg, colpal)
 pop_ch$color <- color
 
 color_matrix <-
-  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
+  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
   select(Cohort, Age, color) %>%
   spread(Age, color) %>%
   as.matrix()
 
 width_matrix <-
-  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA)) %>%
-  select(Cohort, Age, Pop) %>%
-  mutate(Pop = rescale(Pop, c(0, 2))) %>%
-  spread(Age, Pop) %>%
+  complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
+  select(Cohort, Age, relative_pop) %>%
+  # mutate(relative_pop = rescale(relative_pop, c(0, 2))) %>%
+  spread(Age, relative_pop) %>%
   as.matrix()
 
 
@@ -176,18 +183,28 @@ ages <- as.numeric(attr(color_matrix, "dimnames")[[2]][-1])
 n_coh <- length(coh)
 n_ages <- length(ages)
 
+color_matrix <- color_matrix[, -1]
+width_matrix <- width_matrix[, -1]
+
 # Functions
 # Polygon
 shrink_fun <- function(x, shrink, x_value = TRUE) {
   
   if(x_value) {
     xman <- x
-    xman[1] <- mean(x[1:2])-(x[2] - x[1])*(shrink/2)
-    xman[2] <- mean(x[1:2])+(x[2] - x[1])*(shrink/2)
+    xman[1] <- mean(x[1:2])-(shrink/2)
+    xman[2] <- mean(x[1:2])+(shrink/2)
+    
+    # xman[1] <- mean(x[1:2])-(x[2] - x[1])*(shrink/2)
+    # xman[2] <- mean(x[1:2])+(x[2] - x[1])*(shrink/2)
   } else {
     xman <- x
-    xman[3] <- mean(x[3:4])-(x[4] - x[3])*(shrink/2)
-    xman[4] <- mean(x[3:4])+(x[4] - x[3])*(shrink/2)
+    
+    xman[3] <- mean(x[3:4])-(shrink/2)
+    xman[4] <- mean(x[3:4])+(shrink/2)
+    
+    # xman[3] <- mean(x[3:4])-(x[4] - x[3])*(shrink/2)
+    # xman[4] <- mean(x[3:4])+(x[4] - x[3])*(shrink/2)
   }
   xman
 }
@@ -222,7 +239,7 @@ for (i in 1:n_coh) {
   mid_y <- c(0:n_ages-1)
   
   # Loop for ages
-  for (j in 2:n_ages) {
+  for (j in 1:n_ages) {
     # Lower Lexis triangle
     x <- c(mid_x[j], mid_x[j]+1, mid_x[j]+1, mid_x[j]+1)
     y <- c(mid_y[j], mid_y[j], mid_y[j],mid_y[j]+1)
