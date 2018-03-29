@@ -1,7 +1,7 @@
 ################################################################################
 #                                                                              #
 # Enhanced Lexis Diagram                                                       #
-# Sebastian Kl?sener, MPIDR                                                    #
+# Jorge Cimentada, Pompea Fabra University, Sebastian Kluesener, MPIDR         #
 #                                                                              #
 ################################################################################
 
@@ -33,6 +33,8 @@ library(MortalitySmooth)
 library(ROMIplot)
 library(tidyverse)
 
+
+
 ################################################################################
 #                                                                              #
 # 1) Import and prepare data                                                   #
@@ -42,13 +44,19 @@ library(tidyverse)
 # Load population data
 
 # replace with your human mortaility accounty
-# id <- read_rds("id")
-id <- c("email", "password")
+id <- read_rds("id")
 country <- "SWE"
 # For width reference
 # If it's set to NA, the
 # width is relative to that cohorts
 # maximum pop
+
+# skl: Actually my intention was to standardize by cohort.
+# But standardizing by year is also
+# a good option as this allows to keep the upper left triangle
+# Standardize by cohort or by year. If both are set to NA, each
+# cohort will be standardized by the biggest size it ever recorded
+selected_cohort <- 1800
 selected_year <- NA
 
 # Choose Male (1) of Female (2)
@@ -108,9 +116,17 @@ time <- sort(unique(pop_long$Year))
 time1 <- time[1]
 time2 <- time[length(time)]
 
-pop_ch <-
-  pop_long %>%
-  filter(Cohort >= time1, Cohort <= time2, Sex == choose[ch])
+# skl: If standardized by cohort or year, the upper left triangle with non-completed cohorts will be shown
+# If the cohorts are standardized by the biggest size ever recorded, they will not be shown
+if (!is.na(selected_cohort) | !is.na(selected_year)) {
+  pop_ch <-
+    pop_long %>%
+    filter(Cohort <= time2, Sex == choose[ch])
+} else {
+  pop_ch <-
+    pop_long %>%
+    filter(Cohort >= time1, Cohort <= time2, Sex == choose[ch])
+}
 
 # Derive the maximum size that was ever recorded for a cohort
 # Split by cohort
@@ -124,26 +140,38 @@ o <- match(pop_ch$Cohort,names(maxcoh))
 pop_ch$Maxpop <- maxcoh[o]
 
 # Here I determine the linewidth
-# from selected_year, which is at the beginning
+# from selected_cohort, which is at the beginning
 
-if (!is.na(selected_year)) {
-  selected_year_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
-} else {
-  selected_year_max <- pop_ch$Maxpop
+# skl: Here I changed it to cohort, so that it is standardized by the maximum size recorded for a cohort
+if (!is.na(selected_cohort)&!is.na(selected_year)) print("Please do not choose both a cohort and a year")
+
+if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
+  print(paste("Please choose a cohort that is observed from birth onwards: ",
+              min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]),sep=""))
 }
 
-factor <- 0.95
-pop_ch$relative_pop <- pop_ch$Pop/selected_year_max*factor
+# Probably one can program this better
+# Standardization by reference cohort
+if (!is.na(selected_cohort)) {
+  selected_max <- max(pop_ch[pop_ch$Cohort == selected_cohort, "Pop"])
+} 
+# Standardization by reference year
+if (!is.na(selected_year)) {
+  selected_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
+}
+# Standardization of each cohort with its maximum size 
+if (is.na(selected_cohort)&is.na(selected_year)) {
+  selected_max <- pop_ch$Maxpop
+}
 
-# popstand <- pop_ch$Pop/max(pop_ch$Pop)*factor
-# lwd_up <- popstand
-# 
-# # Here I determine the linewidth for the lower lines
-# # This should be improved
-# popmax <- pop_ch$Maxpop/max(pop_ch$Pop)*factor
-# lcoh <- length(unique(pop_ch$Cohort))
-# cohmax <- maxcoh/max(pop_ch$Pop)*factor
-# lwd_low <- cohmax
+factor <- 0.9
+pop_ch$relative_pop <- pop_ch$Pop/selected_max*factor
+
+# skl: If any value above 0.95, rescale to 0.95
+if (max(pop_ch$relative_pop)>0.95) {
+  print("Lines have been rescaled to avoid overlapping lines")
+  pop_ch$relative_pop <- pop_ch$relative_pop/(max(pop_ch$relative_pop)/0.95)
+}
 
 # Match pop data to cmx data
 # Turn age in cmx into a numeric variable
@@ -220,9 +248,16 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-# pdf(file="HMD_SWE_MALES4.pdf",width = 20, height = 7,family="Californian FB")
-# png(file=paste("170115_HMD_SWE_",export[ch],"check.png",sep=""),
-#     family="Californian FB", width = 10000, height = 3600, res=600)
+# pdf(file="HMD_SWE_MALES5_by_itself.pdf",width = 10, height = 5)
+#,family="Californian FB")
+# png(file=paste("170115_HMD_SWE_",export[ch],"check1.png",sep=""),
+#     #family="Californian FB",
+#     width = 5000, height = 3000, res=300)
+#tiff(file=paste("170115_HMD_SWE_",export[ch],"check1.png",sep=""),
+#     #family="Californian FB",
+#     #width = 5000, height = 3000, res=300,,compression="lzw")
+#     width = 2000, height = 1500, res=300,,compression="lzw")
+#
 #
 # tiff(file=paste("170621_HMD_SWE_",export[ch],"with_grey_old.tif",sep=""),
 #      family="Californian FB", width = 20000, height = 7200, res=1200,compression="lzw")
@@ -278,7 +313,7 @@ for (i in 1:n_coh) {
     
     # x_sh <- c(1751, 1752, 1752, 1752)
     # y_sh <- c(0, 0, 1.975, 1.025)
-
+    
     polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
     
