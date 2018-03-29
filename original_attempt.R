@@ -32,6 +32,9 @@ library(HMDHFDplus)
 library(MortalitySmooth)
 library(ROMIplot)
 library(tidyverse)
+library(viridis)
+library(classInt)
+
 
 
 
@@ -45,7 +48,7 @@ library(tidyverse)
 
 # Replace with your human mortaility account
 id <- read_lines("id.txt")
-country <- "USA"
+country <- "SWE"
 # For width reference
 # If it's set to NA, the
 # width is relative to that cohorts
@@ -60,9 +63,9 @@ selected_cohort <- NA
 selected_year <- 1960
 
 # Choose Male (1) of Female (2)
-ch <- 2
+ch <- 1
 # color can be 'black' or 'grey'
-backgr_color <- "grey95"
+backgr_color <- "black"
 
 if (backgr_color == "black") {
   axis_color <- alpha("grey95",0.75)
@@ -193,12 +196,29 @@ csex <- which(colnames(cmx)==choose[ch])
 
 pop_ch$mx <- cmx[,csex][o1]
 
-pop_ch <- filter(pop_ch, mx <= 1)
+pop_ch <- filter(pop_ch, mx <= 1, mx != 0) # because log(0) is infinity
 
-library(viridis)
-library(classInt)
 colpal <- magma(100, alpha = 1, begin = 0.1, end = 1)
-# Choose bins
+
+#################################
+# Log the variable
+# pop_ch$mx <- log(pop_ch$mx)
+# Search for the equivalent values to 0.05, 0.2 and 1 (for bins)
+# tibble(orig = pop_ch$mx, logged = log(pop_ch$mx)) %>% 
+#   filter(orig <= 1) %>% 
+#   arrange(-orig)
+#
+# These are arbitrary. I chose the equivalent 0.05, 0.2 and 1 with the
+# code above.
+# cutoff <- c(-0.3, -1.61, 0)
+#
+# # Define bins
+# bins <- c(seq(min(pop_ch$mx), cutoff[1],length.out = 50),
+#           seq(cutoff[1] + 0.01, cutoff[2], length.out = 20),
+#           seq(cutoff[2] + 0.01, cutoff[3], length.out = 30))
+#################################
+
+
 bins <- c(seq(0,0.05,0.05/50), seq(0.055,0.2,0.145/20),seq(0.2,1,0.8/28)[-1])
 # Assigns color according to fixed breaks categorization
 catg <- classIntervals(pop_ch$mx, fixedBreaks=bins,
