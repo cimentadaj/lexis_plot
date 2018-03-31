@@ -35,9 +35,6 @@ library(tidyverse)
 library(viridis)
 library(classInt)
 
-
-
-
 ################################################################################
 #                                                                              #
 # 1) Import and prepare data                                                   #
@@ -60,18 +57,12 @@ country <- "SWE"
 # Standardize by cohort or by year. If both are set to NA, each
 # cohort will be standardized by the biggest size it ever recorded
 selected_cohort <- NA
-selected_year <- 1960
+selected_year <- NA
 
 # Choose Male (1) of Female (2)
 ch <- 1
 # color can be 'black' or 'grey'
 backgr_color <- "black"
-
-if (backgr_color == "black") {
-  axis_color <- alpha("grey95",0.75)
-} else {
-  axis_color <- "grey30"
-}
 
 pop <-
   readHMDweb(CNTRY = country,
@@ -194,7 +185,30 @@ matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
 o1 <- match(matchvecpop,matchvecmx)
 csex <- which(colnames(cmx)==choose[ch])
 
-pop_ch$mx <- cmx[,csex][o1]
+#### Estimate first order difference
+# mincoh <- min(cmx$Year)
+# maxcoh <- max(cmx$Year)
+# rangecoh <- c(mincoh:maxcoh)
+# 
+# # Length, if we take first-order differences
+# l_fod <- length(rangecoh)-1
+# l_fod_ma3 <- length(rangecoh)-3
+# 
+# # Direct first order change - Example for females
+# reslist <- list()
+# for (i in 1:l_fod) {
+#   cmx_tm1 <- cmx[cmx$Year==rangecoh[i],] 
+#   cmx_t <- cmx[cmx$Year==rangecoh[i+1],] 
+#   fod <- cmx_t[[csex]]/cmx_tm1[[csex]]
+#   fod[fod==Inf] <- NA
+#   reslist[[i]] <- data.frame(Year = cmx_t$Year,
+#                              Age = cmx_t$Age)
+#   reslist[[i]][colnames(cmx)[csex]] <- fod
+# }
+# cmx <- bind_rows(reslist)
+#########
+
+pop_ch$mx <- cmx[,choose[ch]][o1]
 
 pop_ch <- filter(pop_ch, mx <= 1, mx != 0) # because log(0) is infinity
 
@@ -273,6 +287,12 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
 # png(file=paste("170115_HMD_SWE_",export[ch],"check1.png",sep=""),
 #     #family="Californian FB",
 #     width = 5000, height = 3000, res=300)
+
+if (backgr_color == "black") {
+  axis_color <- alpha("grey95",0.75)
+} else {
+  axis_color <- "grey30"
+}
 
 par(bg = backgr_color, mar=c(5, 4, 4, 2),fig=c(0,1,0,1))
 ages <- c(0, 100)
@@ -358,3 +378,4 @@ plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
 text(0.35,0.5,sprintf("%1.0f",1),col=axis_color)
 
 # dev.off()
+
