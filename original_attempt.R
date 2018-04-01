@@ -53,11 +53,12 @@ hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
 #                                       cohort mortality rates
 #                                   (3) First-order differences 
 #                                       in cohort mortality rates 
-var_of_int <- 3
+var_of_int <- 1
 
 # Choose country
-country <- "SWE"
-name_cou <- hmd_cou$Name[hmd_cou$IDs==country]
+country <- "USA"
+
+name_cou <- hmd_cou$IDs[hmd_cou$Name==country]
 
 # Choose Male (1) of Female (2)
 ch <- 2
@@ -71,9 +72,9 @@ ch <- 2
 # then each cohort is standardized by itself
 # skl: This should be reprogrammed so that the user has four choices
 
-selected_cohort <- 1960
+selected_cohort <- NA
 selected_year <- NA
-no_stand <- FALSE
+no_stand <- TRUE
 
 # skl2: Color can be 'black' or 'grey90'
 bgcol <- "black"
@@ -85,7 +86,7 @@ if (bgcol=="black") {
 
 # Load HMD data
 pop <-
-  readHMDweb(CNTRY = country,
+  readHMDweb(CNTRY = name_cou,
              item = "Population",
              username = id[1],
              password = id[2]) %>%
@@ -96,7 +97,7 @@ pop <-
   arrange(Year, Age)
 
 cmx <-
-  readHMDweb(CNTRY = country,
+  readHMDweb(CNTRY = name_cou,
              item = "cMx_1x1",
              username = id[1],
              password = id[2]) %>%
@@ -135,13 +136,12 @@ time2 <- time[length(time)]
 # If the cohorts are standardized by the biggest size ever recorded, 
 # the upper left triangle will not be shown
 if (!is.na(selected_cohort) | !is.na(selected_year | no_stand==T)) {
-  pop_ch <-
-    pop_long %>%
-    filter(Cohort <= time2, Sex == choose[ch])
+  pop_ch <- filter(pop_long, Cohort <= time2, Sex == choose[ch])
+  cmx <- filter(cmx, Year <= time2)
 } else {
-  pop_ch <-
-    pop_long %>%
-    filter(Cohort >= time1, Cohort <= time2, Sex == choose[ch])
+  pop_ch <- filter(pop_long,
+                   Cohort >= time1, Cohort <= time2, Sex == choose[ch])
+  cmx <- filter(cmx, Year >= time1, Year <= time2)
 }
 
 # Derive the maximum size that was ever recorded for a cohort
@@ -291,13 +291,13 @@ if (var_of_int==3) {
     cmx_t <- log(cmx[cmx$Year==rangecoh[i+1],]) 
     fod <- cmx_t[[csex]]-cmx_tm1[[csex]]
     fod[fod==Inf] <- NA
-    reslist[[i]] <- data.frame(Year = cmx[cmx$Year==rangecoh[i], "Year"],
-                               Age = cmx[cmx$Year==rangecoh[i], "Age"])
+    reslist[[i]] <- data.frame(Year = cmx[cmx$Year==rangecoh[i+1], "Year"],
+                               Age = cmx[cmx$Year==rangecoh[i+1], "Age"])
     reslist[[i]][colnames(cmx)[csex]] <- fod
   }
   cmx_new <- bind_rows(reslist)
   mat1 <- paste(pop_ch$Cohort,pop_ch$Age)
-  mat2 <- paste(cmx$Year,cmx$Age)
+  mat2 <- paste(cmx_new$Year,cmx_new$Age)
   o <- match(mat1,mat2)
   pop_ch$change <- cmx_new[,3][o]
   pop_ch$change[pop_ch$change==-Inf] <- NA
@@ -317,24 +317,11 @@ if (var_of_int==3) {
   pop_ch$color <- findColours(catg, colpal)
 }
 
-# if (i %in% c(1,2)) { 
 color_matrix <-
   complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
   select(Cohort, Age, color) %>%
   spread(Age, color) %>%
   as.matrix()
-# }
-
-# skl2: Tried to change this in order to overcome the error in the matching. This might go in the right direction, 
-# but is not resolving the issue as e.g. the 1751 is still plotted even though plotting of the first order
-# differences should start at 1752
-# if (i %in% c(3)) { 
-#   color_matrix <-
-#     complete(pop_ch, Year, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
-#     select(Year, Age, color) %>%
-#     spread(Age, color) %>%
-#     as.matrix()
-# }
 
 width_matrix <-
   complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
