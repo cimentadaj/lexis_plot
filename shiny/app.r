@@ -32,13 +32,27 @@ id <- read_lines("shiny/id.txt")
 hmd_cou <- read_csv("shiny/HMD_countries.csv")
 
 
+# All options
+
+ind_options <- c("Cohort mortality rates",
+                 "Gender differences in cohort mortality rates",
+                 "First order differences in cohort mortality rates")
+
+std_options <- c("Classic Lexis surface",
+                 "Standardize relative to cohort",
+                 "Standardize relative to year",
+                 "Standardize by itself")
+
+color_options <- c("Black", "Grey")
+gender_options <- c("Male", "Female")
+
 ## Add save plot button
 
 align <- "justify"
 
 ui <- tabsetPanel(
   tabPanel("Introduction",
-           fluidPage(theme = shinytheme("readable"),
+           fluidPage(theme = shinytheme("cyborg"),
                      useShinyjs(),
                      titlePanel("Educational inequality around the world"),
                      sidebarLayout(
@@ -92,7 +106,7 @@ ui <- tabsetPanel(
                       column(3, uiOutput('type_std'))),
              actionButton("make_plot", "Create plot"),
              hr(),
-             mainPanel(# plotOutput("graph", height = 600, width = 1200),
+             mainPanel(plotOutput("graph", height = 600, width = 1200),
                downloadButton("save_plot", "Click here to download plot")))
   ),
   id = "tabs", selected = "Introduction"
@@ -110,6 +124,9 @@ server <- # Define server logic required to draw a histogram
       if (input$graph_tab > 0)
         updateTabsetPanel(session, "tabs", selected = "Graphics")
     })
+    
+    
+    #### Defining inputs
     
     output$country <- renderUI({
       selectInput("country",
@@ -131,7 +148,6 @@ server <- # Define server logic required to draw a histogram
       print(paste("Downloaded", name_cou))
       return(pop)
     })
-
     observe({
       if (is.null(pop())) {
         return()
@@ -142,31 +158,23 @@ server <- # Define server logic required to draw a histogram
     ####
     
     output$indicator <- renderUI({
-      ind <- c("Cohort mortality rates",
-               "Gender differences in cohort mortality rates",
-               "First order differences in cohort mortality rates")
-      
       selectInput("indicator", label = "Select indicator",
-                  choices = ind)
+                  choices = ind_options)
     })
     
     output$gender <- renderUI({
       selectInput("gender", label = "Gender",
-                  choices = c("Male", "Female"))
+                  choices = gender_options)
     })
     
     output$color <- renderUI({
       selectInput("color", label = "Background color",
-                  choices = c("Black", "Grey"))
+                  choices = color_options)
     })
     
     output$std <- renderUI({
       selectInput("std", label = "Type of line width",
-                  choices = c("Classic Lexis surface",
-                              "Standardize relative to cohort",
-                              "Standardize relative to year",
-                              "Standardize by itself"
-                              ))
+                  choices = std_options)
     })
     
     output$type_std <- renderUI({
@@ -187,7 +195,102 @@ server <- # Define server logic required to draw a histogram
       )
     })
     
+    #####
     
+    define_plot <- function() {
+      long_cnt_name <- input$country
+      name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
+      var_of_int <- which(input$indicator == ind_options)
+      ch <- which(input$gender == gender_options)
+      backgr_color <- if (input$color == "Black") "black" else "grey90"
+      
+      # 1) no_stand: If no_stand is equal to true, the whole 
+      #                 Lexis surface is shown
+      no_stand <- FALSE
+      # 2) selected_cohort: standardize by cohort
+      selected_cohort <- NA
+      # 3) selected_year: standardize by year
+      selected_year <- NA
+      
+      if (input$std == std_options[1]) {
+        no_stand <- TRUE
+      } else if (input$std == std_options[2]) {
+        selected_cohort <- input$type_std
+      } else if (input$std == std_options[3]) {
+        selected_year <- input$type_std
+      }
+      
+      pop <- pop()
+      # Load HMD data
+      source("shiny/load_cmx.R", local = TRUE)
+      
+      # Prepare data
+      source("shiny/prepare_data.R", local = TRUE)
+      
+      if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
+        print(paste("Please choose a cohort that is observed from birth onwards: ",
+                    min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]),sep=""))
+      }
+      
+      # Define colors
+      source("shiny/define_color_width.R", local = TRUE)
+      
+      # Cohorts and ages
+      coh <- as.numeric(unique(color_matrix[,"Cohort"]))
+      ages <- as.numeric(attr(color_matrix, "dimnames")[[2]][-1])
+      
+      color_matrix <- color_matrix[, -1]
+      width_matrix <- width_matrix[, -1]
+      
+      # Loop over cohorts and ages
+      n_coh <- length(coh)
+      n_ages <- length(ages)
+      
+      # Functions
+      # Polygon
+      shrink_fun <- function(x, shrink, x_value = TRUE) {
+        
+        if(x_value) {
+          xman <- x
+          xman[1] <- mean(x[1:2])-(shrink/2)
+          xman[2] <- mean(x[1:2])+(shrink/2)
+        } else {
+          xman <- x
+          
+          xman[3] <- mean(x[3:4])-(shrink/2)
+          xman[4] <- mean(x[3:4])+(shrink/2)
+        }
+        xman
+      }
+      
+      if (backgr_color == "black") {
+        axis_color <- alpha("grey95",0.75)
+      } else {
+        axis_color <- "grey30"
+      }
+      
+      source("shiny/create_plot.R", local = TRUE)
+      create_plot()
+    }
+    
+    plot_ready <- eventReactive(input$make_plot, {
+      define_plot()
+    })
+    
+    output$save_plot <- downloadHandler(
+      filename = function() { 
+        paste(input$country, "-", input$gender,".png",sep="")
+      },
+      content = function(file) {
+        png(file, width = 5000, height = 3000, res=300)
+        define_plot()
+        dev.off()
+      })
+    
+    output$graph <- renderPlot({
+      plot_ready()
+    })
+
     # ch <- which(gender_ops == input$gender)
 
     # filtered <- eventReactive(input$make_plot, {

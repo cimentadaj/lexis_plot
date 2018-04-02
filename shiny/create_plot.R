@@ -17,16 +17,16 @@ create_plot <- function() {
   axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color)
   
   if (var_of_int==1) {
-    title(main=paste(title[ch]," in ", name_cou, " - Cohort Mortality Rates",sep=""),
+    title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates",sep=""),
           col.main=axis_color)
   }
   if (var_of_int==2) {
-    title(main=paste(title[ch]," in ", name_cou, 
+    title(main=paste(title[ch]," in ", long_cnt_name, 
                      " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[choose!=choose[ch]],"=100)",sep=""),
           col.main=axis_color)
   }
   if (var_of_int==3) {
-    title(main=paste(title[ch]," in ", name_cou, " - Cohort Mortality Rates (log-scaled absolute difference compared to preceding year)",sep=""),
+    title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates (log-scaled absolute difference compared to preceding year)",sep=""),
           col.main=axis_color)
   }
   # You sort of fixed the colors but you still need to figure out how to change

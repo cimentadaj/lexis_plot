@@ -38,10 +38,10 @@ library(tidyverse)
 # Load population data
 
 # Access information to HMD account
-id <- read_lines("id.txt")
+id <- read_lines("shiny/id.txt")
 
 # Read file with information on country names and demonyms
-hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
+hmd_cou <- read_csv("shiny/HMD_countries.csv")
 
 # Choose variables of interest are: (1) Cohort mortality rate, 
 #                                   (2) Gender differences in 
@@ -51,9 +51,9 @@ hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
 var_of_int <- 2
 
 # Choose country
-country <- "Sweden"
+long_cnt_name <- "Sweden"
 
-name_cou <- hmd_cou$IDs[hmd_cou$Name==country]
+name_cou <- hmd_cou$IDs[hmd_cou$Name==long_cnt_name]
 
 # Choose Male (1) of Female (2)
 ch <- 1
@@ -65,7 +65,7 @@ ch <- 1
 no_stand <- FALSE
 
 # 2) selected_cohort: standardize by cohort
-selected_cohort <- 1960
+selected_cohort <- NA
 
 # 3) selected_year: standardize by year
 selected_year <- NA
@@ -90,10 +90,11 @@ if (bgcol=="black") {
 download <- FALSE
 
 # Load HMD data
-source("load_data.R")
+source("shiny/load_pop.R")
+source("shiny/load_cmx.R")
 
 # Prepare data
-source("prepare_data.R")
+source("shiny/prepare_data.R")
 
 if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
   print(paste("Please choose a cohort that is observed from birth onwards: ",
@@ -101,7 +102,7 @@ if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
 }
 
 # Define colors
-source("define_color_width.R")
+source("shiny/define_color_width.R")
 
 # Cohorts and ages
 coh <- as.numeric(unique(color_matrix[,"Cohort"]))
@@ -137,14 +138,14 @@ if (backgr_color == "black") {
   axis_color <- "grey30"
 }
 
-source("create_plot.R")
+source("shiny/create_plot.R")
 create_plot()
 
 # dev.off()
 
 if (download) {
   dev.copy(png,
-           paste(country, "-", export[ch],".png",sep=""),
+           paste(long_cnt_name, "-", export[ch],".png",sep=""),
            width = 5000, height = 3000, res=300)
   dev.off()
 }
