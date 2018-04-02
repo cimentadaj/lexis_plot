@@ -165,10 +165,10 @@ server <- # Define server logic required to draw a histogram
     
     output$save_plot <- downloadHandler(
       filename = function() { 
-        paste(input$country, "-", input$gender,".png",sep="")
+        paste(input$country, "-", input$gender,".svg",sep="")
       },
       content = function(file) {
-        png(file, width = 5000, height = 3000, res=300)
+        svglite(file, width = 13, height = 6)
         define_plot()
         dev.off()
       })

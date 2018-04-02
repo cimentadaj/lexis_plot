@@ -2,7 +2,7 @@ ui <- tabsetPanel(
   tabPanel("Introduction",
            fluidPage(theme = shinytheme("cyborg"),
                      useShinyjs(),
-                     titlePanel("Exploring the history with enhanced Lexis Surfaces"),
+                     titlePanel("Exploring history with enhanced Lexis Surfaces"),
                      sidebarLayout(
                        sidebarPanel = NULL,
                        mainPanel(

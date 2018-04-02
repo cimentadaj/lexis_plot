@@ -1,4 +1,5 @@
 # Load libraries
+library(svglite)
 library(shiny)
 library(shinythemes)
 library(lattice)
@@ -39,7 +40,7 @@ ind_options <- c("Cohort mortality rates",
 std_options <- c("Classic Lexis surface",
                  "Standardize relative to cohort",
                  "Standardize relative to year",
-                 "Standardize year by itself")
+                 "Standardize cohort by itself")
 
 color_options <- c("Black", "Grey")
 gender_options <- c("Male", "Female")
