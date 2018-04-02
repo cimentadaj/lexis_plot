@@ -40,7 +40,7 @@ library(tidyverse)
 # Access information to HMD account
 id <- read_lines("id.txt")
 
-# skl2: Read file with information on country names and demonyms
+# Read file with information on country names and demonyms
 hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
 
 # Choose variables of interest are: (1) Cohort mortality rate, 
