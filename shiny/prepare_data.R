@@ -67,9 +67,8 @@ if (is.na(selected_cohort)&is.na(selected_year)) {
 
 factor <- 0.9
 pop_ch$relative_pop <- pop_ch$Pop/selected_max*factor
-
 # If any value above 0.95, rescale to 0.95
-if (max(pop_ch$relative_pop)>0.95) {
+if (max(pop_ch$relative_pop, na.rm = TRUE)>0.95) {
   print("Lines have been rescaled to avoid overlapping lines")
   pop_ch$relative_pop <- pop_ch$relative_pop/(max(pop_ch$relative_pop)/0.95)
 }
