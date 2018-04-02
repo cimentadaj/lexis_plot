@@ -56,7 +56,7 @@ hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
 var_of_int <- 1
 
 # Choose country
-country <- "USA"
+country <- "Sweden"
 
 name_cou <- hmd_cou$IDs[hmd_cou$Name==country]
 
@@ -77,7 +77,7 @@ selected_year <- NA
 no_stand <- TRUE
 
 # skl2: Color can be 'black' or 'grey90'
-bgcol <- "black"
+bgcol <- "grey90"
 if (bgcol=="black") {
   backgr_color <- "black"
 } else {
