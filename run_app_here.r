@@ -31,9 +31,7 @@ id <- read_lines("shiny/id.txt")
 # Access country names
 hmd_cou <- read_csv("shiny/HMD_countries.csv")
 
-
 # All options
-
 ind_options <- c("Cohort mortality rates",
                  "Gender differences in cohort mortality rates",
                  "First order differences in cohort mortality rates")
@@ -41,13 +39,12 @@ ind_options <- c("Cohort mortality rates",
 std_options <- c("Classic Lexis surface",
                  "Standardize relative to cohort",
                  "Standardize relative to year",
-                 "Standardize by itself")
+                 "Standardize year by itself")
 
 color_options <- c("Black", "Grey")
 gender_options <- c("Male", "Female")
 
 ## Add save plot button
-
 align <- "justify"
 
 runApp("shiny/")
