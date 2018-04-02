@@ -5,9 +5,6 @@
 #                                                                              #
 ################################################################################
 
-# Erase all objects in workspace
-#rm(list=ls(all=TRUE))
-
 # Load libraries
 library(lattice)
 library(spdep)
@@ -30,7 +27,6 @@ library(ROMIplot)
 library(tidyverse)
 library(viridis)
 library(classInt)
-# skl2: additional library color ramp
 library(colorRamps)
 
 
@@ -48,7 +44,7 @@ id <- read_lines("id.txt")
 # skl2: Read file with information on country names and demonyms
 hmd_cou <- read.table("HMD_countries.csv",sep=",",head=T,stringsAsFactor=F)
 
-# skl2: Choose variables of interest are: (1) Cohort mortality rate, 
+# Choose variables of interest are: (1) Cohort mortality rate, 
 #                                   (2) Gender differences in 
 #                                       cohort mortality rates
 #                                   (3) First-order differences 
@@ -64,19 +60,31 @@ name_cou <- hmd_cou$IDs[hmd_cou$Name==country]
 ch <- 2
 
 # Choose standardization for the line width
-# skl2: no_stand: If no_stand is equal to true, the whole 
-#                 Lexis surface is shown
-# selected_cohort: standardize by cohort
-# selected_year: standardize by year
-# If no_stand==T and selected_cohort and selected_year==NA,
-# then each cohort is standardized by itself
-# skl: This should be reprogrammed so that the user has four choices
 
-selected_cohort <- NA
-selected_year <- NA
+# 1) no_stand: If no_stand is equal to true, the whole 
+#                 Lexis surface is shown
 no_stand <- TRUE
 
-# skl2: Color can be 'black' or 'grey90'
+# 2) selected_cohort: standardize by cohort
+selected_cohort <- NA
+
+# 3) selected_year: standardize by year
+selected_year <- NA
+
+# 4) If no_stand==T and selected_cohort and selected_year==NA,
+# then each cohort is standardized by itself
+
+# Warning messages
+if (!is.na(selected_cohort)&!is.na(selected_year)) print("Please do not choose both a cohort and a year")
+if (!is.na(selected_cohort)&!is.na(selected_year)&no_stand==T) print("Please do not use more than one method")
+
+if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
+  print(paste("Please choose a cohort that is observed from birth onwards: ",
+              min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]),sep=""))
+}
+
+
+# Choose colors: can be 'black' or 'grey90'
 bgcol <- "grey90"
 if (bgcol=="black") {
   backgr_color <- "black"
@@ -110,10 +118,6 @@ pop_long <- reshape(pop, varying=names(pop)[c(3:5)],
 
 # Define row names
 row.names(pop_long) <- 1:nrow(pop_long)
-
-# Turn age into a numeric variable
-pop_long$Age <- as.numeric(as.character(pop_long$Age))
-pop_long$Age[is.na(pop_long$Age)] <- 110
 
 # Subset dataset so that it only includes ages up to 100
 pop_long <- subset(pop_long, pop_long$Age<=100, select= -id)
@@ -155,15 +159,6 @@ maxcoh <- unlist(lapply(bycoh,max))
 o <- match(pop_ch$Cohort,names(maxcoh))
 pop_ch$Maxpop <- maxcoh[o]
 
-# Warning messages
-if (!is.na(selected_cohort)&!is.na(selected_year)) print("Please do not choose both a cohort and a year")
-if (!is.na(selected_cohort)&!is.na(selected_year)&no_stand==T) print("Please do not use more than one method")
-
-if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
-  print(paste("Please choose a cohort that is observed from birth onwards: ",
-              min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]),sep=""))
-}
-
 # Probably one can program this better
 # Standardization by reference cohort
 if (!is.na(selected_cohort)) {
@@ -173,7 +168,6 @@ if (!is.na(selected_cohort)) {
 if (!is.na(selected_year)) {
   selected_max <- max(pop_ch[pop_ch$Year == selected_year, "Pop"])
 }
-
 # Standardization of each cohort with its maximum size 
 if (is.na(selected_cohort)&is.na(selected_year)) {
   selected_max <- pop_ch$Maxpop
@@ -188,13 +182,13 @@ if (max(pop_ch$relative_pop)>0.95) {
   pop_ch$relative_pop <- pop_ch$relative_pop/(max(pop_ch$relative_pop)/0.95)
 }
 
-# skl2 <- Set all to one, in case we want the surface
+# Set all to one, in case we want the surface
 if (no_stand==T) {
   pop_ch$relative_pop <- 1
 }
 
-# skl2: Adjusted viridis function: the line where cols are defined allows now to use any bins and not
-# only those of an equally spaced categorisation
+# Adjusted viridis function: the line where cols are defined allows now to
+# use any bins and not only those of an equally spaced categorisation
 magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
   option <- switch(option,
                    A = "A",
@@ -218,8 +212,6 @@ magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
 }
 
 # Match pop data to cmx data
-# Turn age in cmx into a numeric variable
-cmx$Age <- as.numeric(as.character(cmx$Age))
 cmx$Age[is.na(cmx$Age)] <- 110
 
 matchvecmx <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
@@ -228,7 +220,7 @@ matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
 o1 <- match(matchvecpop,matchvecmx)
 csex <- which(colnames(cmx)==choose[ch])
 
-# skl2: Cohort mortality rates (magma colors)
+# Cohort mortality rates (magma colors)
 if (var_of_int==1) {
   pop_ch$mx <- cmx[,choose[ch]][o1]
   
@@ -238,7 +230,6 @@ if (var_of_int==1) {
   # using a beta distribution, providing us high flexibility to cut colors
   # from the magmacolor scheme
   colbins <- pbeta(seq(0,0.95,((0.95-0)/100)),4.4,2.6)
-  plot(colbins)
   
   colpal <- magmaadjust(100,bins=colbins)
   
@@ -272,10 +263,7 @@ if (var_of_int==2) {
   pop_ch$color <- findColours(catg, colpal)
 }   
 
-# skl2: First order differences (this part of the code seems,
-# to work now, but then the colors are somehow not assigned to the 
-# right cohorts, e.g. 1751 should no longer be visible as we do not
-# have a cohort 1750 to compare to, but it is still visible)
+# skl2: First order differences
 if (var_of_int==3) {
   mincoh <- min(cmx$Year)
   maxcoh <- max(cmx$Year)
@@ -358,13 +346,6 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
-#svg(file="HMD_SWE_MALES5_by_itself.svg",width = 15, height = 7)
-#pdf(file="HMD_SWE_MALES5_by_itself.pdf",width = 15, height = 7)
-#,family="Californian FB")
-# png(file=paste("170115_HMD_SWE_",export[ch],"check1.png",sep=""),
-#     #family="Californian FB",
-#     width = 5000, height = 3000, res=300)
-
 if (backgr_color == "black") {
   axis_color <- alpha("grey95",0.75)
 } else {
@@ -426,7 +407,7 @@ for (i in 1:n_coh) {
     y_sh <- shrink_fun(y, width_matrix[i, j], x_value = F)
     y_sh <- y_sh + match_zero
     
-    # skl2: deactivated the grey polygons as they blur the svg outputs    
+    # Deactivated the grey polygons as they blur the svg outputs    
     #polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
     
@@ -439,7 +420,7 @@ for (i in 1:n_coh) {
     y_inv_sh <- shrink_fun(y_inv, width_matrix[i, j])
     y_inv_sh <- y_inv_sh + match_zero
     
-    # skl2: deactivated the grey polygons as they blur the svg outputs    
+    # Deactivated the grey polygons as they blur the svg outputs    
     #polygon(x_inv_sh, y_inv_sh, lty=0, col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
     polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
   }
@@ -486,7 +467,7 @@ if (var_of_int==1) {
   lines(density(pop_ch$mx,na.rm = TRUE), col="grey95",lwd=1)
 }
 
-# skl2: Legend with density curve for the gender differences
+# Legend with density curve for the gender differences
 if (var_of_int==2) {
   op2 <- par(mar=c(1,0,0,0), fig=c(0.7,0.9,0.05,0.175), new = TRUE)
   ymax <- max(density(pop_ch$gendif,na.rm = TRUE)$y)
@@ -517,7 +498,7 @@ if (var_of_int==2) {
        col=axis_color,col.ticks = axis_color,col.axis=axis_color)
   lines(density(pop_ch$gendif,na.rm = TRUE), col="grey5",lwd=2)
   lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
-}  
+}
 
 # Legend with density curve for the first order differences
 if (var_of_int==3) {
@@ -549,7 +530,13 @@ if (var_of_int==3) {
        col=axis_color,col.ticks = axis_color,col.axis=axis_color)
   lines(density(pop_ch$change,na.rm = TRUE), col="grey5",lwd=2)
   lines(density(pop_ch$change,na.rm = TRUE), col="grey95",lwd=1)
-}  
+}
 
 # dev.off()
 
+if (download) {
+  dev.copy(png,
+           'paste(country, "-", export[ch],".png",sep="")',
+           width = 5000, height = 3000, res=300)
+  dev.off()
+}
