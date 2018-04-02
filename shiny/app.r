@@ -22,6 +22,7 @@ library(ROMIplot)
 library(viridis)
 library(classInt)
 library(colorRamps)
+library(shinyjs)
 library(tidyverse)
 
 # Access information to HMD account
@@ -38,6 +39,7 @@ align <- "justify"
 ui <- tabsetPanel(
   tabPanel("Introduction",
            fluidPage(theme = shinytheme("readable"),
+                     useShinyjs(),
                      titlePanel("Educational inequality around the world"),
                      sidebarLayout(
                        sidebarPanel = NULL,
@@ -82,22 +84,27 @@ ui <- tabsetPanel(
   
   tabPanel("Graphics",
            fluidPage(
-             fluidRow(column(4, 
-                             uiOutput('indicator')),
-                      column(5,
-                             uiOutput('country')),
-                      column(3,
-                             uiOutput('gender'))),
+             fluidRow(column(4, uiOutput('indicator')),
+                      column(5, uiOutput('country')),
+                      column(3, uiOutput('gender'))),
+             fluidRow(column(4, uiOutput('color')),
+                      column(5, uiOutput('std')),
+                      column(3, uiOutput('type_std'))),
              actionButton("make_plot", "Create plot"),
              hr(),
              mainPanel(# plotOutput("graph", height = 600, width = 1200),
                downloadButton("save_plot", "Click here to download plot")))
   ),
   id = "tabs", selected = "Introduction"
-                         )
+  )
 
 server <- # Define server logic required to draw a histogram
   shinyServer(function(input, output, session) {
+    
+    observe({
+      toggleState("make_plot", input$country != "No selection" || is.null(input$country))
+      })
+    
     
     observe({
       if (input$graph_tab > 0)
@@ -106,12 +113,13 @@ server <- # Define server logic required to draw a histogram
     
     output$country <- renderUI({
       selectInput("country",
-                  label = "Select the country",
+                  label = "Select the country (takes a few seconds to download)",
                   choices = c("No selection", hmd_cou$Name),
                   selected = "No selection")
     })
     
-    filtered <- reactive({
+    ### Population data
+    pop <- reactive({
       if (is.null(input$country)) {
         return(NULL)
       } else if (input$country == "No selection") {
@@ -121,18 +129,18 @@ server <- # Define server logic required to draw a histogram
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       source("shiny/load_pop.R", local = TRUE)
       print(paste("Downloaded", name_cou))
+      return(pop)
     })
-    
+
     observe({
-      if (is.null(filtered())) {
+      if (is.null(pop())) {
         return()
       } else {
-        filtered()
+        pop()
       }
     })
-  
-    print(ls())
-
+    ####
+    
     output$indicator <- renderUI({
       ind <- c("Cohort mortality rates",
                "Gender differences in cohort mortality rates",
@@ -142,11 +150,43 @@ server <- # Define server logic required to draw a histogram
                   choices = ind)
     })
     
-    gender_ops <- c("Male", "Female")
     output$gender <- renderUI({
       selectInput("gender", label = "Gender",
-                  choices = gender_ops)
+                  choices = c("Male", "Female"))
     })
+    
+    output$color <- renderUI({
+      selectInput("color", label = "Background color",
+                  choices = c("Black", "Grey"))
+    })
+    
+    output$std <- renderUI({
+      selectInput("std", label = "Type of line width",
+                  choices = c("Classic Lexis surface",
+                              "Standardize relative to cohort",
+                              "Standardize relative to year",
+                              "Standardize by itself"
+                              ))
+    })
+    
+    output$type_std <- renderUI({
+      if (is.null(pop())) return()
+      ran <- range(pop()$Year, na.rm = TRUE, finite = TRUE)
+      print(ran)
+      conditionalPanel(
+        condition =
+          "(input.std == 'Standardize relative to cohort' |
+           input.std == 'Standardize relative to year') &
+           input.country != 'No selection'",
+        numericInput("type_std",
+                     label = paste0("Line width relative to which year \n",
+                                    "(between ", ran[1], "-", ran[2], ")"),
+                     value = 1960,
+                     min = ran[1],
+                     max = ran[2])
+      )
+    })
+    
     
     # ch <- which(gender_ops == input$gender)
 
