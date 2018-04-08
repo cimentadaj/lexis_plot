@@ -1,4 +1,12 @@
 create_plot <- function() {
+  outfile <- tempfile(fileext='.svg')
+  
+  width  <- session$clientData$output_graph_width
+  height <- session$clientData$output_graph_height
+  mysvgwidth <- width/96
+  mysvgheight <- height/96
+
+  svglite::svglite(outfile, width = mysvgwidth, height = mysvgheight)
   par(bg = backgr_color, mar=c(12, 4, 4, 2),fig=c(0,1,0,1))
   ages <- c(0, 100)
   
@@ -178,4 +186,12 @@ create_plot <- function() {
     lines(density(pop_ch$change,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey95",lwd=1)
   }
+  
+  dev.off()
+  
+  # Return a list containing the filename
+  list(src = normalizePath(outfile),
+       contentType = 'image/svg+xml',
+       width = width,
+       height = height)
 }

@@ -173,7 +173,7 @@ server <- # Define server logic required to draw a histogram
         dev.off()
       })
     
-    output$graph <- renderPlot({
+    output$graph <- renderImage({
       plot_ready()
     })
   })
