@@ -5,15 +5,12 @@ server <- # Define server logic required to draw a histogram
       toggleState("make_plot", input$country != "No selection" || is.null(input$country))
     })
     
-    
     observe({
       if (input$graph_tab > 0)
         updateTabsetPanel(session, "tabs", selected = "Graphics")
     })
     
-    
     #### Defining inputs
-    
     output$country <- renderUI({
       selectInput("country",
                   label = "Select the country (takes a few seconds to download)",
@@ -32,8 +29,9 @@ server <- # Define server logic required to draw a histogram
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       source("load_pop.R", local = TRUE)
       print(paste("Downloaded", name_cou))
-      return(pop)
+      pop
     })
+    
     observe({
       if (is.null(pop())) {
         return()
@@ -41,6 +39,7 @@ server <- # Define server logic required to draw a histogram
         pop()
       }
     })
+    
     ####
     
     output$indicator <- renderUI({
@@ -83,7 +82,7 @@ server <- # Define server logic required to draw a histogram
     
     #####
     
-    define_plot <- function() {
+    define_plot <- function(outfile) {
       long_cnt_name <- input$country
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       var_of_int <- which(input$indicator == ind_options)
@@ -156,24 +155,48 @@ server <- # Define server logic required to draw a histogram
       }
       
       source("create_plot.R", local = TRUE)
-      create_plot()
+      create_plot(outfile)
     }
     
+    outfile <- tempfile(fileext = ".svg")
+    
     plot_ready <- eventReactive(input$make_plot, {
-      define_plot()
+      define_plot(outfile)
+    })
+    
+    # Why don't I make the two expressions below just one?
+    # Because I use `f_try` later on and if I called f_try
+    # and send it to ouput$ I wouldn't be able to retrieve
+    # the url the it returns.
+    f_try <- reactive({
+      plot_ready()
+    })
+    
+    output$graph <- renderImage({
+      f_try()
+    },
+    deleteFile = FALSE)
+    # VERY IMPORTANT! otherwise it deletes the file and `save_plot`
+    # can't find the plot.
+    
+    the_svg <- reactive({
+      f_try()$src
     })
     
     output$save_plot <- downloadHandler(
-      filename = function() { 
-        paste(input$country, "-", input$gender,".svg",sep="")
+      filename =  function() {
+        if (is.null(input$country)) {
+          return(NULL)
+        } else if (input$country == "No selection") {
+          return()
+        }
+        
+        paste0(input$country, "-", input$gender,".svg")
       },
       content = function(file) {
-        svglite(file, width = 13, height = 6)
-        define_plot()
-        dev.off()
-      })
-    
-    output$graph <- renderImage({
-      plot_ready()
-    })
-  })
+        the_svg <- the_svg()
+        on.exit(unlink(the_svg))
+        file.copy(the_svg, file)
+      }, contentType = 'image/svg'
+    )
+})

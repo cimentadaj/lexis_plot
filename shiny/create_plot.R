@@ -1,6 +1,4 @@
-create_plot <- function() {
-  outfile <- tempfile(fileext='.svg')
-  
+create_plot <- function(outfile) {
   width  <- session$clientData$output_graph_width
   height <- session$clientData$output_graph_height
   mysvgwidth <- width/96
