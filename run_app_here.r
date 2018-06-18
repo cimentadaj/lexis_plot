@@ -24,6 +24,7 @@ library(viridis)
 library(classInt)
 library(colorRamps)
 library(shinyjs)
+library(shinycssloaders)
 library(tidyverse)
 
 # Access information to HMD account

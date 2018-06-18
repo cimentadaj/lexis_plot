@@ -45,8 +45,8 @@ ui <- tabsetPanel(
                       column(5, uiOutput('std')),
                       column(3, uiOutput('type_std'))),
              actionButton("make_plot", "Create plot"),
-             hr(),
-             mainPanel(plotOutput("graph", height = 600, width = 1200),
+             hr(), # withspinner is to have a nice spinning loading bar when graph is recalculated.
+             mainPanel(withSpinner(plotOutput("graph", height = 600, width = 1200)),
                        downloadButton("save_plot", "Click here to download plot")))
   ),
   id = "tabs", selected = "Introduction"
