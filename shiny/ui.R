@@ -34,7 +34,10 @@ ui <- tabsetPanel(
                            a("Sebastian Kluesener", href = "https://twitter.com/demomapper"), "and",
                            a("Jorge Cimentada", href = "https://cimentadaj.github.io/"), align = align),
                          br(),
-                         actionButton("graph_tab", "Click here to access your countries' plot.", icon = icon("flag")), align = align)))),
+                         actionButton("graph_tab", "Click here to access your countries' plot.", icon = icon("flag")), align = align)),
+                     tags$style("body {background-color: #000000;}")
+                     )
+           ),
   
   tabPanel("Graphics",
            fluidPage(
@@ -46,8 +49,11 @@ ui <- tabsetPanel(
                       column(3, uiOutput('type_std'))),
              actionButton("make_plot", "Create plot"),
              hr(), # withspinner is to have a nice spinning loading bar when graph is recalculated.
-             mainPanel(withSpinner(plotOutput("graph", height = 600, width = 1200)),
-                       downloadButton("save_plot", "Click here to download plot")))
-  ),
-  id = "tabs", selected = "Introduction"
-                         )
+             fluidRow(
+               column(9, offset = 1,
+                      withSpinner(plotOutput("graph",  height = 800, width = 1400))
+                      )
+               ),
+               downloadButton("save_plot", "Click here to download plot"))
+  ), id = "tabs", selected = "Introduction"
+  )
