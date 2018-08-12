@@ -44,7 +44,6 @@ if (var_of_int==1) {
   
   colpal <- magmaadjust(100,bins=colbins)
   
-  
   # Assigns color according to fixed breaks categorization 
   # skl1: Hier I am taking the bins by equal interval from the log scale, and exponentiate them
   bins <- exp(c(-100,seq(-9.9,0,0.1)))
