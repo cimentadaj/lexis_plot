@@ -87,7 +87,12 @@ server <- # Define server logic required to draw a histogram
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       var_of_int <- which(input$indicator == ind_options)
       ch <- which(input$gender == gender_options)
-      backgr_color <- if (input$color == "Black") "black" else "grey90"
+      backgr_color <-
+        switch(input$color,
+               "Black" = "black",
+               "Grey" = "grey90",
+               "White" = "white"
+        )
       
       # 1) no_stand: If no_stand is equal to true, the whole 
       #                 Lexis surface is shown

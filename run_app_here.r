@@ -43,7 +43,7 @@ std_options <- c("Classic Lexis surface",
                  "Standardize relative to year",
                  "Standardize cohort by itself")
 
-color_options <- c("Black", "Grey")
+color_options <- c("Black", "Grey", "White")
 gender_options <- c("Male", "Female")
 
 ## Add save plot button
