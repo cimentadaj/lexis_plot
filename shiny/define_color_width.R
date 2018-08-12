@@ -42,7 +42,7 @@ if (var_of_int==1) {
   # from the magmacolor scheme
   colbins <- pbeta(seq(0,0.95,((0.95-0)/100)),4.4,2.6)
   
-  colpal <- magmaadjust(100,bins=colbins)
+  colpal <- magmaadjust(100,bins=colbins, option = "magma")
   
   # Assigns color according to fixed breaks categorization 
   # skl1: Hier I am taking the bins by equal interval from the log scale, and exponentiate them
@@ -51,6 +51,20 @@ if (var_of_int==1) {
   catg <- classIntervals(pop_ch$mx, fixedBreaks=bins,
                          style = "fixed")
   color <- findColours(catg, colpal)
+  
+  if (backgr_color == "white") {
+
+    # Here I tried from white to red and to firebrick1 and it doesn't look good at all.
+    # I also tried the color blind pallete from ggthemes::show_col(ggthemes::colorblind_pal()(8))
+
+    # I think perhaps cleanest way is to try another version of viridis (which btw, I just
+    # read that it is colorblind friendly, see https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
+    # I'm pretty sure we can find a citation for this vignette or a paper they wrote.
+    colramp <- colorRampPalette(c("white", "#CC79A7"),bias=1,space="rgb",interpolate="linear",alpha=F)
+    colpal <- colramp(100)
+    color <- findColours(catg, colpal)
+  }
+  
   pop_ch$color <- color
 }
 
