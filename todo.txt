@@ -1,0 +1,8 @@
+There is a problem with Belgium whenever you set the  mortality rates
+according to a given year, it has all missing values and produces a
+plot which is empty
+[ ] - Fix problem with Belgium
+[ ] - Make that sure that when downloading the plot the extension
+is.svg
+[ ] - Test that the app works in the shiny server because it was
+crashing for Sebastian for some reason.

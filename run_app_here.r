@@ -34,7 +34,7 @@ id <- read_lines("shiny/id.txt")
 hmd_cou <- read_csv("shiny/HMD_countries.csv")
 
 # All options
-ind_options <- c("Cohort mortality rates",
+ind_options <- c("Cohort mortality rate",
                  "Gender differences in cohort mortality rates",
                  "First order differences in cohort mortality rates")
 
@@ -50,3 +50,6 @@ gender_options <- c("Male", "Female")
 align <- "justify"
 
 runApp("shiny/")
+
+
+
