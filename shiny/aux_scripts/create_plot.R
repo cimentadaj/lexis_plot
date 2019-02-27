@@ -1,4 +1,29 @@
+# Functions
+# Polygon
+# This is the function to define the width of the line.
+# We do so by constructing a a polygon with the width
+# according to the population and assign the color
+# based on the population. 
+shrink_fun <- function(x, shrink, x_value = TRUE) {
+  
+  if(x_value) {
+    xman <- x
+    xman[1] <- mean(x[1:2])-(shrink/2)
+    xman[2] <- mean(x[1:2])+(shrink/2)
+  } else {
+    xman <- x
+    
+    xman[3] <- mean(x[3:4])-(shrink/2)
+    xman[4] <- mean(x[3:4])+(shrink/2)
+  }
+  xman
+}
+
+
 create_plot <- function(outfile) {
+  
+  # To save the plot according to the width and height
+  # of the user viewing the plot
   width  <- session$clientData$output_graph_width
   height <- session$clientData$output_graph_height
   mysvgwidth <- width/96
@@ -37,11 +62,10 @@ create_plot <- function(outfile) {
     title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates (log-scaled absolute difference compared to preceding year)",sep=""),
           col.main=axis_color)
   }
-  # You sort of fixed the colors but you still need to figure out how to change
-  # the border color of the polygons and the first line of colors.
-  
+
   # Loop for cohorts
   for (i in 1:n_coh) {
+    
     # In order to fixate point 2 which we are
     # are not shrinking
     mid_x <- seq(coh[i],coh[i]+n_ages,1)
@@ -63,7 +87,6 @@ create_plot <- function(outfile) {
       y_sh <- y_sh + match_zero
       
       # Deactivated the grey polygons as they blur the svg outputs    
-      #polygon(x_sh, y_sh, lty=0,col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
       polygon(x_sh, y_sh, lty=0,col=color_matrix[i, j], border = color_matrix[i, j])
       
       # Upper Lexis triangle year + 1
@@ -76,7 +99,6 @@ create_plot <- function(outfile) {
       y_inv_sh <- y_inv_sh + match_zero
       
       # Deactivated the grey polygons as they blur the svg outputs    
-      #polygon(x_inv_sh, y_inv_sh, lty=0, col=adjustcolor("grey",alpha.f=0.5), border = adjustcolor("grey",alpha.f=0.5))
       polygon(x_inv_sh, y_inv_sh, lty=0, col=color_matrix[i, j], border = color_matrix[i, j])
     }
   }
@@ -85,8 +107,8 @@ create_plot <- function(outfile) {
   abline(h=c(seq(ages[1],ages[2],10)),col=axis_color,lty=2)
   abline(v=c(seq(time1,time2,10)),col=axis_color,lty=2)
   
-  # skl2 Here I plot the legend and density curve on the log scale. 
-  # Had problem with the lower tail as I was not able to use 0 as the lower limit. 
+  # Here we plot the legend and density curve on the log scale. 
+  # Had problem with the lower tail as we were not able to use 0 as the lower limit. 
   # Had to improvise manually by using 0.0001 and pretending this to be to 0 when
   # defining the label. Not optimal, but at least it seems to work now.
   if (var_of_int==1) {
@@ -104,7 +126,7 @@ create_plot <- function(outfile) {
       polygon(c(bins[j],bins[j+1]+0.05,bins[j+1]+0.05,bins[j]),
               c(0,0,ymax,ymax), col=colpal[j],border=NA)
     }
-    # skl: last one not.
+    # ast one not.
     for (j in (length(bins)-1)){ 
       polygon(c(bins[j],bins[j+1],bins[j+1],bins[j]),
               c(0,0,ymax,ymax), col=colpal[j],border=NA)

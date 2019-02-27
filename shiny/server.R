@@ -24,6 +24,7 @@ server <- # Define server logic required to draw a histogram
     })
     
     ### Population data
+    # Function to ** Download cohort sizes ** to set line width.
     pop <- reactive({
       if (is.null(input$country)) {
         return(NULL)
@@ -43,7 +44,7 @@ server <- # Define server logic required to draw a histogram
       pop
     })
     
-    ####
+    #### Render all menu options from the app
     
     output$indicator <- renderUI({
       selectInput("indicator", label = "Select indicator",
@@ -65,6 +66,9 @@ server <- # Define server logic required to draw a histogram
                   choices = std_options)
     })
     
+    # After downloading the data, figure out the range
+    # in years for that given country. This is shown
+    # in the relative width option in the menu.
     output$type_std <- renderUI({
       if (is.null(pop())) return()
       ran <- range(pop()$Year, na.rm = TRUE, finite = TRUE)
@@ -85,11 +89,27 @@ server <- # Define server logic required to draw a histogram
     
     #####
     
+    # Function to create the plot. Accepts
+    # the directory where to save it, in case
+    # the user clicks on 'Download plot'
     define_plot <- function(outfile) {
+      
+      # Identify key indicators from the data
+      
+      # Long country name from the menu that the user clicked
       long_cnt_name <- input$country
+      
+      # The ID of the country in the HMD database
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
+      
+      # The variable of interest. One of the ones in `ind_options`
+      # in the script run_app_here.R
       var_of_int <- which(input$indicator == ind_options)
+      
+      # Whether the gender differences are relative to Male/Female
       ch <- which(input$gender == gender_options)
+      
+      # Color of the background plot
       backgr_color <-
         switch(input$color,
                "Black" = "black",
@@ -105,6 +125,10 @@ server <- # Define server logic required to draw a histogram
       # 3) selected_year: standardize by year
       selected_year <- NA
       
+      # Depending on the type of plot (see vector std_options in
+      # run_app_here.R) there is either standardization, either
+      # the width of the lines are relative to a given year
+      # etc... This is where we set those options
       if (input$std == std_options[1]) {
         no_stand <- TRUE
       } else if (input$std == std_options[2]) {
@@ -113,19 +137,38 @@ server <- # Define server logic required to draw a histogram
         selected_year <- input$type_std
       }
       
+      # Download data
       pop <- pop()
-      # Load HMD data
+      
+      # Load mortality data for the same country data
       source("aux_scripts/load_cmx.R", local = TRUE)
       
-      # Prepare data
+      # Until this point we have all options ready and data
+      # for mortality as well as cohort sizes.
+      
+      # Prepare both datasets together. The result is a pop_ch
+      # data frame with all information.
       source("aux_scripts/prepare_data.R", local = TRUE)
       
-      if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
-        print(paste("Please choose a cohort that is observed from birth onwards: ",
-                    min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]),sep=""))
+      
+      too_big_cohort <- length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0, ][ ,1]) == 0
+      
+      if (too_big_cohort) {
+        print(
+          paste(
+            "Please choose a cohort that is observed from birth onwards: ",
+            min(pop_ch$Cohort[pop_ch$Age==0]),"-",max(pop_ch$Cohort[pop_ch$Age==0]), sep=""
+          )
+        )
       }
       
-      # Define colors
+      # Define colors. This is where we develop
+      # a color scale based on the mortality rates
+      # from the data above.
+      # This produces two data frames: color_matrix and width_matrix
+      # which contains the color values for each of the values in
+      # mortality as well as population, to feed into the graph
+      # accordingly.
       source("aux_scripts/define_color_width.R", local = TRUE)
       
       # Cohorts and ages
@@ -139,29 +182,14 @@ server <- # Define server logic required to draw a histogram
       n_coh <- length(coh)
       n_ages <- length(ages)
       
-      # Functions
-      # Polygon
-      shrink_fun <- function(x, shrink, x_value = TRUE) {
-        
-        if(x_value) {
-          xman <- x
-          xman[1] <- mean(x[1:2])-(shrink/2)
-          xman[2] <- mean(x[1:2])+(shrink/2)
-        } else {
-          xman <- x
-          
-          xman[3] <- mean(x[3:4])-(shrink/2)
-          xman[4] <- mean(x[3:4])+(shrink/2)
-        }
-        xman
-      }
-      
       if (backgr_color == "black") {
         axis_color <- alpha("grey95",0.75)
       } else {
         axis_color <- "grey30"
       }
       
+      # create_plot.R actually creates the complete plot.
+      # It is a dense script which needs detaled attention.
       source("aux_scripts/create_plot.R", local = TRUE)
       create_plot(outfile)
     }
@@ -191,6 +219,7 @@ server <- # Define server logic required to draw a histogram
       f_try()$src
     })
     
+    # If user clicks on download plot, save it in .svg
     output$save_plot <- downloadHandler(
       filename =  function() {
         if (is.null(input$country)) {

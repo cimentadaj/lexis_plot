@@ -65,8 +65,11 @@ if (is.na(selected_cohort)&is.na(selected_year)) {
   selected_max <- pop_ch$Maxpop
 }
 
+# The fact by which to standardize cohort lines.
 factor <- 0.9
+
 pop_ch$relative_pop <- pop_ch$Pop/selected_max*factor
+
 # If any value above 0.95, rescale to 0.95
 if (max(pop_ch$relative_pop, na.rm = TRUE)>0.95) {
   print("Lines have been rescaled to avoid overlapping lines")
@@ -74,6 +77,6 @@ if (max(pop_ch$relative_pop, na.rm = TRUE)>0.95) {
 }
 
 # Set all to one, in case we want the surface
-if (no_stand==T) {
+if (no_stand == T) {
   pop_ch$relative_pop <- 1
 }
