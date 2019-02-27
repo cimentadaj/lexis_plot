@@ -21,7 +21,8 @@ library(dplyr)
 id <- read_lines("id.txt")
 
 # Access country names
-hmd_cou <- read_csv("data/HMD_countries.csv")
+hmd_path <- file.path("data", "HMD_countries.csv")
+hmd_cou <- read_csv(hmd_path)
 
 # All options
 ind_options <- c("Cohort mortality rates",
@@ -38,5 +39,3 @@ gender_options <- c("Male", "Female")
 
 ## Add save plot button
 align <- "justify"
-
-runApp()
