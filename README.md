@@ -34,4 +34,54 @@ This should open up the application.
 - The folder `shiny/www` contains images used in the Shiny app.
 
 - The file `todo.txt` contains bugs that are found along the way the will be fixed in the future.
+
+### Steps to reproduce paper
+
+To reproduce the plots in the paper 'Exploring the Demographic History of Populations with Enhanced Lexis Surfaces', follow the steps below:
+
+1) Load the Shiny app by following the first section in this document.
+
+2) Steps to reproduce figure 1:
+  + Choose Sweden in option 'Select country'
+  + Select background color as 'White'
+  + Click on 'Create plot'
+
+3) Steps to reproduce figure 2:
+  + Choose Sweden in option 'Select country'
+  + Select background color as 'White'
+  + Set option 'Type of line width' to 'Standardize cohort by itself'
+  + Click on 'Create plot'
+
+4) Steps to reproduce figure 3:
+  + Choose France in option 'Select country'
+  + Select background color as 'White'
+  + Set option 'Type of line width' to 'Classic Lexis Surface'
+  + Click on 'Create plot'
   
+5) Steps to reproduce figure 4a:
+  + Choose France in option 'Select country'
+  + Select background color as 'White'
+  + Set option 'Type of line width' to 'Standardize cohort by itself'
+  + Click on 'Create plot'
+  
+5) Steps to reproduce figure 4b:
+  + Choose France in option 'Select country'
+  + Select background color as 'White'
+  + Set option 'Type of line width' to 'Standardize relative to cohort'
+  + Set option 'Line width relative to which year' to 1960
+  + Click on 'Create plot'
+  
+6) Steps to reproduce figure 5:
+  + Choose USA in option 'Select country'
+  + Select background color as 'White'
+  + Set 'Select indicator' to 'First order differences in cohort mortality rates'
+  + Set option 'Type of line width' to 'Classic Lexis Surface'
+  + Click on 'Create plot'
+
+7) Steps to reproduce figure 6:
+  + Choose USA in option 'Select country'
+  + Select background color as 'White'
+  + Set 'Select indicator' to 'First order differences in cohort mortality rates'
+  + Set option 'Type of line width' to 'Standardize relative to cohort'
+  + Set option 'Line width relative to which year' to 1960
+  + Click on 'Create plot'

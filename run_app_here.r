@@ -18,7 +18,7 @@ library(dplyr)
 
 
 # Access information to HMD account
-id <- read_lines("shiny/hmd_credentials/id.txt")
+id <- read_lines("shiny/id.txt")
 
 # Access country names
 hmd_cou <- read_csv("shiny/data/HMD_countries.csv")
