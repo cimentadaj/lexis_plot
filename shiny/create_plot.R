@@ -11,8 +11,10 @@ create_plot <- function(outfile) {
   plot(x = c(time1, time2),
        y = ages,
        pch=20,
+       bty="n",
        col="transparent",
        col.axis=axis_color,
+       fg=backgr_color,
        font.lab=2,
        cex.lab=1.2,
        ylab="Age",
@@ -20,7 +22,7 @@ create_plot <- function(outfile) {
        col.lab=axis_color,
        xaxt = "n")
   
-  axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color)
+  axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color,fg=backgr_color)
   
   if (var_of_int==1) {
     title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates",sep=""),
@@ -128,6 +130,9 @@ create_plot <- function(outfile) {
     lbi <- length(bins)-1
     lines(density(pop_ch$gendif,na.rm = TRUE), xlab="", ylab="", lwd=2, main="")
     bins1 <- bins[bins>-1]
+    # Ensure that bins go from 0 to 300
+    if (bins1[1]>0) bins1[1] <- 0 
+    if (bins1[length(bins1)]<300) bins1[length(bins1)] <- 300 
     polygon(c(bins1[1],bins1[301],bins[301],bins[1]),
             c(0,0,ymax,ymax), col="white")
     # skl: Frist 99 polygons are slightly overlapping
@@ -160,6 +165,9 @@ create_plot <- function(outfile) {
     plot(c(-0.5,0.5),c(0,ymax),col="transparent",axes=F, xlab="", ylab="")
     lbi <- length(bins)-1
     lines(density(pop_ch$change,na.rm = TRUE), xlab="", ylab="", lwd=2, main="")
+    # Ensure that bins go from -0.5 to 0.5
+    if (bins[1]>-0.5) bins[1] <- -0.5 
+    if (bins[length(bins)]<0.5) bins[length(bins)] <- 0.5 
     polygon(c(bins[1],bins[201],bins[201],bins[1]),
             c(0,0,ymax,ymax), col="white")
     # skl: Frist 99 polygons are slightly overlapping
@@ -175,7 +183,6 @@ create_plot <- function(outfile) {
     # box around
     polygon(c(bins[1],bins[201],bins[201],bins[1]),
             c(0,0,ymax,ymax), col=NA,border=axis_color)
-    
     ab <- c(-0.5,-0.25,0,0.25,0.5)
     abline(v=c(ab),col=axis_color)
     axis(1,at=c(ab),

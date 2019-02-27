@@ -52,7 +52,7 @@ if (var_of_int==1) {
                          style = "fixed")
   color <- findColours(catg, colpal)
   
-  if (backgr_color == "white") {
+  #if (backgr_color == "white") {
 
     # Here I tried from white to red and to firebrick1 and it doesn't look good at all.
     # I also tried the color blind pallete from ggthemes::show_col(ggthemes::colorblind_pal()(8))
@@ -60,10 +60,10 @@ if (var_of_int==1) {
     # I think perhaps cleanest way is to try another version of viridis (which btw, I just
     # read that it is colorblind friendly, see https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
     # I'm pretty sure we can find a citation for this vignette or a paper they wrote.
-    colramp <- colorRampPalette(c("white", "#CC79A7"),bias=1,space="rgb",interpolate="linear",alpha=F)
-    colpal <- colramp(100)
-    color <- findColours(catg, colpal)
-  }
+  #  colramp <- colorRampPalette(c("white", "#CC79A7"),bias=1,space="rgb",interpolate="linear",alpha=F)
+  #  colpal <- colramp(100)
+  #  color <- findColours(catg, colpal)
+  #}
   
   pop_ch$color <- color
 }
@@ -74,12 +74,21 @@ if (var_of_int==2) {
   pop_ch$mx2 <- cmx[,choose[which(choose!=choose[ch])]][o1]
   pop_ch$gendif <- pop_ch$mx1/pop_ch$mx2*100
   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
-  red <- brewer.pal(9,"Reds")[9]
-  green <- brewer.pal(9,"Greens")[9]
+#  red <- brewer.pal(9,"Reds")[9]
+#  green <- brewer.pal(9,"Greens")[9]
+#  if (backgr_color=="black") {
+#    colramp <- colorRampPalette(c(green,"white",red),bias=1,space="rgb",interpolate="linear",alpha=F)
+#  } else{
+#    colramp <- colorRampPalette(c(green,"grey60",red),bias=1,space="rgb",interpolate="linear",alpha=F)     
+#  }
+#  colpal <- colramp(300)
+  pal <- rev(brewer.pal(11,"PRGn"))
   if (backgr_color=="black") {
-    colramp <- colorRampPalette(c(green,"white",red),bias=1,space="rgb",interpolate="linear",alpha=F)
+    colramp <- colorRampPalette(c(pal[1],pal[6],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)
   } else{
-    colramp <- colorRampPalette(c(green,"grey60",red),bias=1,space="rgb",interpolate="linear",alpha=F)     
+    colramp <- colorRampPalette(c(pal[1],"grey85",pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)
+#    colramp <- colorRampPalette(c(pal[5],"grey15",pal[7]),bias=1,space="rgb",interpolate="linear",alpha=F)     
+    
   }
   colpal <- colramp(300)
   bins <- c(seq(-50,249,1),max(pop_ch$gendif,na.rm=T))
@@ -114,12 +123,20 @@ if (var_of_int==3) {
   o <- match(mat1,mat2)
   pop_ch$change <- cmx_new[,3][o]
   pop_ch$change[pop_ch$change==-Inf] <- NA
-  red <- brewer.pal(9,"Reds")[9]
-  green <- brewer.pal(9,"Greens")[9]
+  #red <- brewer.pal(9,"Reds")[9]
+  #green <- brewer.pal(9,"Greens")[9]
+  #if (backgr_color=="black") {
+  #  colramp <- colorRampPalette(c(green,"white",red),bias=1,space="rgb",interpolate="linear",alpha=F)
+  #} else{
+  #  colramp <- colorRampPalette(c(green,"grey60",red),bias=1,space="rgb",interpolate="linear",alpha=F)     
+  #}
+  #colpal <- colramp(200)
+  pal <- rev(brewer.pal(11,"PRGn"))
   if (backgr_color=="black") {
-    colramp <- colorRampPalette(c(green,"white",red),bias=1,space="rgb",interpolate="linear",alpha=F)
+    colramp <- colorRampPalette(c(pal[1],pal[6],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)
   } else{
-    colramp <- colorRampPalette(c(green,"grey60",red),bias=1,space="rgb",interpolate="linear",alpha=F)     
+    #colramp <- colorRampPalette(c(pal[1],pal[6],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)     
+    colramp <- colorRampPalette(c(pal[1],pal[2],"grey85",pal[10],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)     
   }
   colpal <- colramp(200)
   bins <- c(min(pop_ch$change,na.rm=T),
