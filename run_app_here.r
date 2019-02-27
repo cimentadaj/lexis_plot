@@ -28,10 +28,10 @@ library(shinycssloaders)
 library(tidyverse)
 
 # Access information to HMD account
-id <- read_lines("shiny/id.txt")
+id <- read_lines("shiny/hmd_credentials/id.txt")
 
 # Access country names
-hmd_cou <- read_csv("shiny/HMD_countries.csv")
+hmd_cou <- read_csv("shiny/data/HMD_countries.csv")
 
 # All options
 ind_options <- c("Cohort mortality rates",

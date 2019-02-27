@@ -27,7 +27,7 @@ server <- # Define server logic required to draw a histogram
       }
       
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
-      source("load_pop.R", local = TRUE)
+      source("aux_scripts/load_pop.R", local = TRUE)
       print(paste("Downloaded", name_cou))
       pop
     })
@@ -112,10 +112,10 @@ server <- # Define server logic required to draw a histogram
       
       pop <- pop()
       # Load HMD data
-      source("load_cmx.R", local = TRUE)
+      source("aux_scripts/load_cmx.R", local = TRUE)
       
       # Prepare data
-      source("prepare_data.R", local = TRUE)
+      source("aux_scripts/prepare_data.R", local = TRUE)
       
       if (length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0,][,1])==0) {
         print(paste("Please choose a cohort that is observed from birth onwards: ",
@@ -123,7 +123,7 @@ server <- # Define server logic required to draw a histogram
       }
       
       # Define colors
-      source("define_color_width.R", local = TRUE)
+      source("aux_scripts/define_color_width.R", local = TRUE)
       
       # Cohorts and ages
       coh <- as.numeric(unique(color_matrix[,"Cohort"]))
@@ -159,7 +159,7 @@ server <- # Define server logic required to draw a histogram
         axis_color <- "grey30"
       }
       
-      source("create_plot.R", local = TRUE)
+      source("aux_scripts/create_plot.R", local = TRUE)
       create_plot(outfile)
     }
     
