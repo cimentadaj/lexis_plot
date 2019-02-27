@@ -1,3 +1,8 @@
+# This script defines the server-side of the application.
+# Here is where we load country data, normalize the
+# lines in the plots and create the plot.
+
+
 server <- # Define server logic required to draw a histogram
   shinyServer(function(input, output, session) {
     
@@ -27,17 +32,15 @@ server <- # Define server logic required to draw a histogram
       }
       
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
+      
+      # This script downloads the data from the Human Mortality
+      # database.
       source("aux_scripts/load_pop.R", local = TRUE)
+      
+      # This print is for the internal logs
+      # of the app, for debugging purposes.
       print(paste("Downloaded", name_cou))
       pop
-    })
-    
-    observe({
-      if (is.null(pop())) {
-        return()
-      } else {
-        pop()
-      }
     })
     
     ####
