@@ -2,7 +2,6 @@ There is a problem with Belgium whenever you set the  mortality rates
 according to a given year, it has all missing values and produces a
 plot which is empty
 [ ] - Fix problem with Belgium
-[ ] - Make that sure that when downloading the plot the extension
-is.svg
 [ ] - Test that the app works in the shiny server because it was
 crashing for Sebastian for some reason.
+[ ] - Choose Israel + Standardize relative to cohort = It throws the please choose a cohort that is observer. This should be shown as a warning in the menu before the plot is made.
