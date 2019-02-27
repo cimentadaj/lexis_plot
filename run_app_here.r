@@ -18,10 +18,10 @@ library(dplyr)
 
 
 # Access information to HMD account
-id <- read_lines("shiny/id.txt")
+id <- read_lines("id.txt")
 
 # Access country names
-hmd_cou <- read_csv("shiny/data/HMD_countries.csv")
+hmd_cou <- read_csv("data/HMD_countries.csv")
 
 # All options
 ind_options <- c("Cohort mortality rates",
@@ -39,4 +39,4 @@ gender_options <- c("Male", "Female")
 ## Add save plot button
 align <- "justify"
 
-runApp("shiny/")
+runApp()
