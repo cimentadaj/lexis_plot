@@ -12,6 +12,7 @@ library(RCurl)
 library(shinyjs)
 library(shinycssloaders)
 library(shinythemes)
+library(xml2)
 library(scales)
 library(tidyr)
 library(dplyr)
@@ -21,8 +22,9 @@ library(dplyr)
 id <- read_lines("id.txt")
 
 # Access country names
-hmd_path <- file.path("data", "HMD_countries.csv")
+hmd_path <- file.path("data", "HMD_Countries.csv")
 hmd_cou <- read_csv(hmd_path)
+
 
 # All options
 ind_options <- c("Cohort mortality rates",

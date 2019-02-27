@@ -2,7 +2,6 @@
 # Here is where we load country data, normalize the
 # lines in the plots and create the plot.
 
-
 server <- # Define server logic required to draw a histogram
   shinyServer(function(input, output, session) {
     
