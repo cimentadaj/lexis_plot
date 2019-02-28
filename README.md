@@ -6,7 +6,7 @@ You can view the Shiny application from the paper [here](https://cimentadaj.shin
 
 ### Running the Shiny app
 
-This repository implements an R Shiny application to visualize enhanced lexis plots. To launch the Shiny app only a few steps are needed:
+This repository implements a R Shiny application to visualize enhanced lexis plots. To launch the Shiny app only a few steps are needed:
 
 1) Register at the [Human Mortality Database website](https://www.mortality.org/mp/auth.pl).
 2) Save your credentials in a new file `id.txt` where the first line is your email and the second line is your password
