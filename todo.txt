@@ -5,3 +5,4 @@ plot which is empty
 [ ] - Test that the app works in the shiny server because it was
 crashing for Sebastian for some reason.
 [ ] - Choose Israel + Standardize relative to cohort = It throws the please choose a cohort that is observer. This should be shown as a warning in the menu before the plot is made.
+[ ] - Implement username/password credentials in app to avoid having our own HMD credentials uploaded.
