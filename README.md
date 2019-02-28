@@ -19,7 +19,7 @@ This should open up the application.
 
 - The 'preface' file is `global.R` which loads the packages and sets the menu options for the application.
 
-- The file `server.R` is the actual workhorse that downloads population/mortality data, cleans the datasets, performes scaling and produces the plot.
+- The file `server.R` is the actual workhorse that downloads population/mortality data, cleans the datasets, performs scaling and produces the plot.
 
 - The file `ui.R` implements the user interface of the application and includes code to generate the options menu, background colors, among other things.
 
