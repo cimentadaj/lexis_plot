@@ -34,7 +34,7 @@ This should open up the application.
 
 - The folder `www/` contains images used in the Shiny app.
 
-- The file `todo.txt` contains bugs that are found along the way the will be fixed in the future.
+- The file `todo.txt` contains bugs/new features that are found along the way the will be fixed/added in the future.
 
 ### Steps to reproduce paper
 
