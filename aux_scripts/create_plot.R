@@ -113,9 +113,8 @@ create_plot <- function(outfile) {
   # defining the label. Not optimal, but at least it seems to work now.
   if (var_of_int==1) {
     op1 <- par(mar=c(0,0,0,0), fig=c(0.585,0.7,0.035,0.09), new = TRUE)
-    # mtext("Cohort death rates",side=1,line=2,col=axis_color)
+    ## mtext("Cohort death rates",side=1,line=2,col=axis_color)
     plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
-    # text(0.5,0.5,"Cohort mortality rates (cmx)",col=axis_color)
     op2 <- par(mar=c(1,0,0,0), fig=c(0.7,0.9,0.05,0.175), new = TRUE)
     ymax <- max(density(pop_ch$mx,na.rm = TRUE)$y)
     plot(c(0.0001,1),c(0,ymax),col="transparent",axes=F, xlab="", ylab="",log="x")
@@ -126,6 +125,7 @@ create_plot <- function(outfile) {
       polygon(c(bins[j],bins[j+1]+0.05,bins[j+1]+0.05,bins[j]),
               c(0,0,ymax,ymax), col=colpal[j],border=NA)
     }
+
     # ast one not.
     for (j in (length(bins)-1)){ 
       polygon(c(bins[j],bins[j+1],bins[j+1],bins[j]),
@@ -137,9 +137,15 @@ create_plot <- function(outfile) {
     
     ab <- c(0.001,0.005,0.020,0.1,1)
     abline(v=c(ab),col=axis_color)
-    axis(1,at=c(0.00007,ab),
+
+    axis(1,
+         at=c(0.00007,ab),
          labels=c(0,round(ab*1000,0)),
-         col=axis_color,col.ticks = axis_color,col.axis=axis_color)
+         col=axis_color,
+         col.ticks = axis_color,
+         col.axis=axis_color)
+
+    mtext(side=1, line=2, "Deaths per 1000", col=axis_color, font=2,cex=1)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey95",lwd=1)
   }
@@ -148,7 +154,14 @@ create_plot <- function(outfile) {
   if (var_of_int==2) {
     op2 <- par(mar=c(1,0,0,0), fig=c(0.7,0.9,0.05,0.175), new = TRUE)
     ymax <- max(density(pop_ch$gendif,na.rm = TRUE)$y)
-    plot(c(0,300),c(0,ymax),col="transparent",axes=F, xlab="", ylab="")
+
+    plot(c(0,300),c(0,ymax),
+         col="transparent",
+         axes=FALSE,
+         xlab="",
+         ylab="",
+         col.main = axis_color)
+    
     lbi <- length(bins)-1
     lines(density(pop_ch$gendif,na.rm = TRUE), xlab="", ylab="", lwd=2, main="")
     bins1 <- bins[bins>-1]
@@ -178,6 +191,9 @@ create_plot <- function(outfile) {
          col=axis_color,col.ticks = axis_color,col.axis=axis_color)
     lines(density(pop_ch$gendif,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
+    label_txt <- paste0("Ratio of deaths per 1000 by ",
+                        input$gender, "/", setdiff(gender_options, input$gender))
+    mtext(side=1, line=2, label_txt, col=axis_color, font=2,cex=1)
   }
   
   # Legend with density curve for the first order differences
@@ -212,6 +228,9 @@ create_plot <- function(outfile) {
          col=axis_color,col.ticks = axis_color,col.axis=axis_color)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey95",lwd=1)
+    mtext(side=1, line=2, "Percentage change in actual year relative to preceding year",
+          col=axis_color, font=2,cex=1)    
+    
   }
   
   dev.off()
