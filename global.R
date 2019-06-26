@@ -28,7 +28,8 @@ hmd_cou <- read_csv(hmd_path)
 
 # All options
 ind_options <- c("Cohort mortality rates",
-                 "Gender differences in cohort mortality rates",
+                 "Gender differences in cohort mortality rates (ratio)",
+                 "Gender differences in cohort mortality rates (difference)",                 
                  "First order differences in cohort mortality rates")
 
 std_options <- c("Classic Lexis surface",

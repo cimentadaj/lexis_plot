@@ -65,6 +65,12 @@ if (is.na(selected_cohort)&is.na(selected_year)) {
   selected_max <- pop_ch$Maxpop
 }
 
+
+
+print("Age group of maximum size ever recorded")
+tst <- pop_ch[pop_ch$Year == selected_year, ]
+print(tst$Age[which.max(tst$Pop)])
+
 # The fact by which to standardize cohort lines.
 factor <- 0.9
 

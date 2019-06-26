@@ -59,6 +59,11 @@ create_plot <- function(outfile) {
           col.main=axis_color)
   }
   if (var_of_int==3) {
+    title(main=paste(title[ch]," in ", long_cnt_name, 
+                     " - Cohort Mortality Rates in Comparison to Opposite Sex (difference in deaths per 1000 persons)",sep=""),
+          col.main=axis_color)
+  }
+  if (var_of_int==4) {
     title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates (log-scaled absolute difference compared to preceding year)",sep=""),
           col.main=axis_color)
   }
@@ -195,9 +200,57 @@ create_plot <- function(outfile) {
                         input$gender, "/", setdiff(gender_options, input$gender))
     mtext(side=1, line=2, label_txt, col=axis_color, font=2,cex=1)
   }
+
+  if (var_of_int==3) {
+    op1 <- par(mar=c(0,0,0,0), fig=c(0.585,0.7,0.035,0.09), new = TRUE)
+    ## mtext("Cohort death rates",side=1,line=2,col=axis_color)
+    plot(c(0,1),c(0,1),col="transparent",axes=F, xlab="", ylab="")
+    op2 <- par(mar=c(1,0,0,0), fig=c(0.7,0.9,0.05,0.175), new = TRUE)
+    ymax <- max(density(pop_ch$gendif,na.rm = TRUE)$y)
+    plot(c(0.0001,1),c(0,ymax),col="transparent",axes=F, xlab="", ylab="",log="x")
+    lbi <- length(bins)-1
+    lines(density(pop_ch$gendif,na.rm = TRUE), xlab="", ylab="", lwd=2, main="")
+
+    # skl: Frist 99 polygons are slightly overlapping
+    for (j in 1:(length(bins)-2)){ 
+      polygon(c(bins[j],bins[j+1]+0.05,bins[j+1]+0.05,bins[j]),
+              c(0,0,ymax,ymax), col=colpal[j],border=NA)
+    }
+
+    # ast one not.
+    for (j in (length(bins)-1)){ 
+      polygon(c(bins[j],bins[j+1],bins[j+1],bins[j]),
+              c(0,0,ymax,ymax), col=colpal[j],border=NA)
+    }
+    # box around
+    polygon(c(0.0000698,bins[101],bins[101],0.0000698),
+            c(0,0,ymax,ymax), col=NA,border=axis_color)
+    
+    ab <- c(0.001,0.005,0.020,0.1,1)
+    abline(v=c(ab),col=axis_color)
+
+    axis(1,
+         at=c(0.00007,ab),
+         labels=c(0,round(ab,0)),
+         col=axis_color,
+         col.ticks = axis_color,
+         col.axis=axis_color)
+
+    mtext(side=1, line=2,
+          paste0(
+            input$gender, "-", setdiff(gender_options, input$gender),
+            " difference in deaths per 1000 persons"
+          ),
+          col=axis_color, font=2,cex=1)
+    
+    lines(density(pop_ch$gendif,na.rm = TRUE), col="grey5",lwd=2)
+    lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
+  }
+
+
   
   # Legend with density curve for the first order differences
-  if (var_of_int==3) {
+  if (var_of_int==4) {
     op2 <- par(mar=c(1,0,0,0), fig=c(0.7,0.9,0.05,0.175), new = TRUE)
     ymax <- max(density(pop_ch$change,na.rm = TRUE)$y)
     plot(c(-0.5,0.5),c(0,ymax),col="transparent",axes=F, xlab="", ylab="")

@@ -65,7 +65,7 @@ if (var_of_int==1) {
   pop_ch$color <- color
 }
 
-# Gender differences in cohort mortality rates
+# Gender differences in cohort mortality rates (ratio)
 if (var_of_int==2) {
   pop_ch$mx1 <- cmx[,choose[ch]][o1]
   pop_ch$mx2 <- cmx[,choose[which(choose!=choose[ch])]][o1]
@@ -85,8 +85,32 @@ if (var_of_int==2) {
   pop_ch$color <- findColours(catg, colpal)
 }   
 
-# First order differences
+# Gender differences in cohort mortality rates (difference)
 if (var_of_int==3) {
+  pop_ch$mx1 <- cmx[,choose[ch]][o1]
+  pop_ch$mx2 <- cmx[,choose[which(choose!=choose[ch])]][o1]
+  pop_ch$gendif <- (pop_ch$mx1 - pop_ch$mx2)
+  pop_ch$gendif[pop_ch$gendif==Inf] <- NA
+  
+  pal <- rev(brewer.pal(11,"PRGn"))
+  if (backgr_color=="black") {
+    colramp <- colorRampPalette(c(pal[1],pal[6],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)
+  } else{
+    colramp <- colorRampPalette(c(pal[1],"grey85",pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)
+  }
+  colpal <- colramp(300)
+  bins <- exp(c(-100,seq(-9.9,0,0.1))) - 0.0001
+  print(min(pop_ch$gendif, na.rm = TRUE))
+  print(max(pop_ch$gendif, na.rm = TRUE))  
+  catg <- classIntervals(pop_ch$gendif, fixedBreaks=bins,
+                         style = "fixed")
+  pop_ch$color <- findColours(catg, colpal)
+  print(catg)
+  print(tail(pop_ch))
+}   
+
+# First order differences
+if (var_of_int==4) {
   mincoh <- min(cmx$Year)
   maxcoh <- max(cmx$Year)
   rangecoh <- mincoh:maxcoh
@@ -127,6 +151,7 @@ if (var_of_int==3) {
                          style = "fixed")
   pop_ch$color <- findColours(catg, colpal)
 }
+
 
 color_matrix <-
   complete(pop_ch, Cohort, Age, fill = list(Pop = NA, Maxpop = NA, mx = NA, color = NA, relative_pop = NA)) %>%
