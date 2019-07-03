@@ -20,8 +20,9 @@ password
 
 Saved as a text file
 
-3) Open the file `global.R` and install all the packages in the start of the R script.
-4) Run `shiny::runApp()` in R inside the main folder of the repository.
+3) Install the package `renv` for package management: `devtools::install_github("rstudio/renv")`
+4) Open an R session with the working directory set to the root of this cloned repository and run `renv::restore()` to install all packages automatically
+5) Run `shiny::runApp()` in R inside the main folder of the repository.
 
 This should open up the application.
 
