@@ -1,4 +1,3 @@
-
 # Adjusted viridis function: the line where cols are defined allows now to
 # use any bins and not only those of an equally spaced categorisation
 magmaadjust <- function (n, alpha = 1, bins, option = "magma") {

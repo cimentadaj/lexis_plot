@@ -20,7 +20,7 @@ cmx[gender] <- if_else(cmx[[gender]] == 0, 0.0000000001, cmx[[gender]])
 
 # Choose data from time1 to time2
 time <- sort(unique(pop_long$Year))
-time1 <- if_else(time[1] > 1920, 1920, time[1])
+time1 <- if_else(time[1] > 1920, 1920L, time[1])
 time2 <- time[length(time)]
 
 # If standardized by cohort or year, the upper left triangle with 
