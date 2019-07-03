@@ -35,7 +35,17 @@ server <- # Define server logic required to draw a histogram
       
       # This script downloads the data from the Human Mortality
       # database.
-      source("aux_scripts/load_pop.R", local = TRUE)
+      pop <-
+        readHMDweb(CNTRY = name_cou,
+                   item = "Population",
+                   username = id[1],
+                   password = id[2]) %>%
+        select(Year, Age, Female1, Male1, Total1) %>%
+        rename(Female = Female1,
+               Male = Male1,
+               Total = Total1) %>%
+        arrange(Year, Age)
+      
       
       # This print is for the internal logs
       # of the app, for debugging purposes.
@@ -139,7 +149,13 @@ server <- # Define server logic required to draw a histogram
       pop <- pop()
       
       # Load mortality data for the same country data
-      source("aux_scripts/load_cmx.R", local = TRUE)
+      cmx <-
+        readHMDweb(CNTRY = name_cou,
+                   item = "cMx_1x1",
+                   username = id[1],
+                   password = id[2]) %>%
+        select(-OpenInterval)
+
       
       # Until this point we have all options ready and data
       # for mortality as well as cohort sizes.

@@ -37,8 +37,6 @@ This should open up the application.
 - The R files in `aux_scripts/` are scripts that perform specific tasks such as cleaning the data, producing plots, among other things. These are all called from `server.R` so no need to touch these interactively. Below is a brief description of each file
   + `aux_scripts/create_plot.R` creates a function that generates the plot
   + `aux_scripts/define_color_width.R` generates a continuous color and width scale proportional to the mortality and population estimates respectively.
-  + `aux_scripts/load_cmx.R` loads mortality data from the Human Mortality Data Base
-  + `aux_scripts/load_pop.R` loads population data from the Human Mortality Data Base
   + `aux_scripts/prepare_data.R` performs data cleaning for the mortality and population datasets
   
 - The folder `data/` contains a small `.csv` file with HMD country names to make a conversion between long country names and short country names used in the Human Mortality Database.
