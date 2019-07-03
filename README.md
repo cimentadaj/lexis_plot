@@ -13,7 +13,7 @@ This repository implements a R Shiny application to visualize enhanced lexis plo
 2) Save your credentials in a new file `id.txt` in the root of the repository where the first line is your email and the second line is your password
 
 The file should be exactly like this:
-```r
+```
 your_email@email.com
 password
 ```
