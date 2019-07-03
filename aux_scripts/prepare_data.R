@@ -11,10 +11,6 @@ pop_long <- subset(pop_long, pop_long$Age<=100, select= -id)
 # Derive cohort data (Population on January 1st)
 pop_long$Cohort <- pop_long$Year-pop_long$Age-1
 
-choose <- c("Male","Female")
-export <- c("MALES","FEMALES")
-title <- c("Males","Females")
-
 # If any age/year cell is empty fill out with a very small number
 #to prevent empty polygons in the graph.
 pop_long$Pop <- if_else(pop_long$Pop == 0, 0.0000000001, pop_long$Pop)
@@ -24,19 +20,18 @@ cmx[gender] <- if_else(cmx[[gender]] == 0, 0.0000000001, cmx[[gender]])
 
 # Choose data from time1 to time2
 time <- sort(unique(pop_long$Year))
-time1 <- if (time[1] > 1920) 1920 else time[1]
+time1 <- if_else(time[1] > 1920, 1920, time[1])
 time2 <- time[length(time)]
 
 # If standardized by cohort or year, the upper left triangle with 
 # non-completed cohorts will be shown
 # If the cohorts are standardized by the biggest size ever recorded, 
 # the upper left triangle will not be shown
-if (!is.na(selected_cohort) | !is.na(selected_year | no_stand==T)) {
+if (!is.na(selected_cohort) | !is.na(selected_year | no_stand)) {
   pop_ch <- filter(pop_long, Cohort <= time2, Sex == choose[ch])
   cmx <- filter(cmx, Year <= time2)
 } else {
-  pop_ch <- filter(pop_long,
-                   Cohort >= time1, Cohort <= time2, Sex == choose[ch])
+  pop_ch <- filter(pop_long, Cohort >= time1, Cohort <= time2, Sex == choose[ch])
   cmx <- filter(cmx, Year >= time1, Year <= time2)
 }
 
@@ -65,24 +60,21 @@ if (is.na(selected_cohort)&is.na(selected_year)) {
   selected_max <- pop_ch$Maxpop
 }
 
-
-
 print("Age group of maximum size ever recorded")
 tst <- pop_ch[pop_ch$Year == selected_year, ]
 print(tst$Age[which.max(tst$Pop)])
 
 # The fact by which to standardize cohort lines.
-factor <- 0.9
-
-pop_ch$relative_pop <- pop_ch$Pop/selected_max*factor
+shrink_factor <- 0.9
+pop_ch$relative_pop <- pop_ch$Pop/selected_max * shrink_factor
 
 # If any value above 0.95, rescale to 0.95
-if (max(pop_ch$relative_pop, na.rm = TRUE)>0.95) {
+if (max(pop_ch$relative_pop, na.rm = TRUE) > 0.95) {
   print("Lines have been rescaled to avoid overlapping lines")
   pop_ch$relative_pop <- pop_ch$relative_pop/(max(pop_ch$relative_pop)/0.95)
 }
 
 # Set all to one, in case we want the surface
-if (no_stand == T) {
+if (no_stand) {
   pop_ch$relative_pop <- 1
 }
