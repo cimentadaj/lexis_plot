@@ -33,7 +33,7 @@ server <- # Define server logic required to draw a histogram
       
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       
-      # This script downloads the data from the Human Mortality
+      # Downloads the data from the Human Mortality
       # database.
       pop <-
         readHMDweb(CNTRY = name_cou,
@@ -134,7 +134,7 @@ server <- # Define server logic required to draw a histogram
       selected_year <- NA
       
       # Depending on the type of plot (see vector std_options in
-      # run_app_here.R) there is either standardization, either
+      # global.R) there is either standardization, either
       # the width of the lines are relative to a given year
       # etc... This is where we set those options
       if (input$std == std_options[1]) {
