@@ -86,7 +86,7 @@ server <- # Define server logic required to draw a histogram
     )
     })
     
-    #####
+   #####
     
     # Function to create the plot. Accepts
     # the directory where to save it, in case
@@ -94,7 +94,6 @@ server <- # Define server logic required to draw a histogram
     define_plot <- function(outfile) {
       
       # Identify key indicators from the data
-      
       # Long country name from the menu that the user clicked
       long_cnt_name <- input$country
       

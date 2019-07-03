@@ -40,5 +40,9 @@ std_options <- c("Classic Lexis surface",
 color_options <- c("Black", "Grey", "White")
 gender_options <- c("Male", "Female")
 
+choose <- c("Male","Female")
+export <- c("MALES","FEMALES")
+title <- c("Males","Females")
+
 ## Add save plot button
 align <- "justify"
