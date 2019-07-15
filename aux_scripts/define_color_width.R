@@ -15,12 +15,12 @@ magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
                      "D"
                    })
   ## colorspace::sequential_hcl(1e3, palette = "Inferno")
-  map <- viridisLite::viridis.map[viridislite::viridis.map$opt == option, ]
-  map_cols <- grdevices::rgb(map$r, map$g, map$b)
-  fn_cols <- grdevices::colorramp(map_cols, space = "lab", 
+  map <- viridisLite::viridis.map[viridisLite::viridis.map$opt == option, ]
+  map_cols <- grDevices::rgb(map$R, map$G, map$B)
+  fn_cols <- grDevices::colorRamp(map_cols, space = "Lab", 
                                   interpolate = "spline")
   cols <- fn_cols(bins)/255
-  grdevices::rgb(cols[, 1], cols[, 2], cols[, 3], alpha = alpha)
+  grDevices::rgb(cols[, 1], cols[, 2], cols[, 3], alpha = alpha)
 }
 
 # Match pop data to cmx data
