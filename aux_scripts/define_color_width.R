@@ -15,7 +15,7 @@ magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
                      "D"
                    })
   ## colorspace::sequential_hcl(1e3, palette = "Inferno")
-  map <- viridislite::viridis.map[viridislite::viridis.map$opt == option, ]
+  map <- viridisLite::viridis.map[viridislite::viridis.map$opt == option, ]
   map_cols <- grdevices::rgb(map$r, map$g, map$b)
   fn_cols <- grdevices::colorramp(map_cols, space = "lab", 
                                   interpolate = "spline")
