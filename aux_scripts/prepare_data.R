@@ -37,10 +37,10 @@ if (!is.na(selected_cohort) | !is.na(selected_year | no_stand)) {
 
 # Derive the maximum size that was ever recorded for a cohort
 # Split by cohort
-bycoh <- split(pop_ch$Pop,pop_ch$Cohort)
+bycoh <- split(pop_ch$Pop, pop_ch$Cohort)
 
 # Derive maximum
-maxcoh <- unlist(lapply(bycoh,max))
+maxcoh <- unlist(lapply(bycoh, max, na.rm = TRUE))
 
 # Match maximum size information to cohort
 o <- match(pop_ch$Cohort,names(maxcoh))
@@ -60,10 +60,6 @@ if (is.na(selected_cohort)&is.na(selected_year)) {
   selected_max <- pop_ch$Maxpop
 }
 
-print("Age group of maximum size ever recorded")
-tst <- pop_ch[pop_ch$Year == selected_year, ]
-print(tst$Age[which.max(tst$Pop)])
-
 # The fact by which to standardize cohort lines.
 shrink_factor <- 0.9
 pop_ch$relative_pop <- pop_ch$Pop/selected_max * shrink_factor
@@ -71,7 +67,9 @@ pop_ch$relative_pop <- pop_ch$Pop/selected_max * shrink_factor
 # If any value above 0.95, rescale to 0.95
 if (max(pop_ch$relative_pop, na.rm = TRUE) > 0.95) {
   print("Lines have been rescaled to avoid overlapping lines")
-  pop_ch$relative_pop <- pop_ch$relative_pop/(max(pop_ch$relative_pop)/0.95)
+
+  max_relative_pop <- max(pop_ch$relative_pop, na.rm = TRUE)
+  pop_ch$relative_pop <- pop_ch$relative_pop / (max_relative_pop / 0.95)
 }
 
 # Set all to one, in case we want the surface
