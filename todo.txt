@@ -1,8 +1,16 @@
 There is a problem with Belgium whenever you set the  mortality rates
 according to a given year, it has all missing values and produces a
 plot which is empty
-[ ] - Fix problem with Belgium
+[ ] - Fix problem with Belgium. 
+TR: note this is due to missing data during WWI. Data for those years in HMD consist in NAs.
 [ ] - Test that the app works in the shiny server because it was
 crashing for Sebastian for some reason.
 [ ] - Choose Israel + Standardize relative to cohort = It throws the please choose a cohort that is observer. This should be shown as a warning in the menu before the plot is made.
 [ ] - Implement username/password credentials in app to avoid having our own HMD credentials uploaded.
+
+TR added
+[ ] - Implement palette selection from colorspace package
+[ ] - fix: all plots should have aspect ratio of 1
+[ ] - scale palette to given value range (sliders), using solid color endpoints for lower and upper intervals. This would enhance the diagnostic value of the app.
+[ ] - add note to interface when doing sex ratios or similar that the selected sex refers to the numerator
+[ ] - 

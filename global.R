@@ -16,7 +16,7 @@ library(xml2)
 library(scales)
 library(tidyr)
 library(dplyr)
-
+library(MortalitySmooth)
 
 # Access information to HMD account
 id <- read_lines("id.txt")
