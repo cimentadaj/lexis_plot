@@ -17,7 +17,7 @@ library(scales)
 library(tidyr)
 library(dplyr)
 library(MortalitySmooth)
-
+library(rlang)
 # Access information to HMD account
 id <- read_lines("id.txt")
 
@@ -46,3 +46,8 @@ title <- c("Males","Females")
 
 ## Add save plot button
 align <- "justify"
+
+# -------------------------------
+# TR: make this an option set in server.R
+smoothmx <- FALSE
+# -------------------------------

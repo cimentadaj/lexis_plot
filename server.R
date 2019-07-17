@@ -127,22 +127,24 @@ server <- # Define server logic required to draw a histogram
       
       # 1) no_stand: If no_stand is equal to true, the whole 
       #                 Lexis surface is shown
-      no_stand <- FALSE
+      no_stand        <- FALSE
       # 2) selected_cohort: standardize by cohort
       selected_cohort <- NA
       # 3) selected_year: standardize by year
-      selected_year <- NA
+      selected_year   <- NA
       
       # Depending on the type of plot (see vector std_options in
       # global.R) there is either standardization, either
       # the width of the lines are relative to a given year
       # etc... This is where we set those options
       if (input$std == std_options[1]) {
-        no_stand <- TRUE
+        no_stand  <- TRUE
       } else if (input$std == std_options[2]) {
         selected_cohort <- input$type_std
+        stand_ind       <- 2
       } else if (input$std == std_options[3]) {
-        selected_year <- input$type_std
+        selected_year   <- input$type_std
+        stand_ind       <- 1
       }
       
       # Download data

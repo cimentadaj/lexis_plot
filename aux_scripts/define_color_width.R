@@ -26,11 +26,13 @@ magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
 # Match pop data to cmx data
 cmx$Age[is.na(cmx$Age)] <- 110
 
-matchvecmx <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
+# TR: this should happen using ..._join()
+# And that should be in prepare_data.R for use everywhere.
+matchvecmx  <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
 matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
 
-o1 <- match(matchvecpop,matchvecmx)
-csex <- which(colnames(cmx)==choose[ch])
+o1          <- match(matchvecpop,matchvecmx)
+csex        <- which(colnames(cmx)==choose[ch])
 
 # Cohort mortality rates (magma colors)
 if (var_of_int==1) {
