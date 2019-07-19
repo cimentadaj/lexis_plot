@@ -43,12 +43,8 @@ pop_long <- pop_long %>%
   ungroup()
 
 # ---------------------------------------------
-# TR: this is also not an easy read, IMO we should have a single
-# data object, where cmx is also long and in the same form as pop_long.
-# but I didn't have time to make downstream usage robust in this sitting.
-# will look at that tomorrow.
-# ---------------------------------------------
 # TR: maybe this can be eliminated now:
+gender      <- sexes[ch]
 cmx[gender] <- if_else(cmx[[gender]] == 0, 0.0000000001, cmx[[gender]])
 # Choose data from time1 to time2
 time  <- sort(unique(pop_long$Year))
