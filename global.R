@@ -18,11 +18,12 @@ library(tidyr)
 library(dplyr)
 library(MortalitySmooth)
 library(rlang)
+library(here)
 # Access information to HMD account
-id <- read_lines("id.txt")
+id <- read_lines(here("id.txt"))
 
 # Access country names
-hmd_path <- file.path("data", "HMD_Countries.csv")
+hmd_path <- here("data", "HMD_Countries.csv")
 hmd_cou <- read_csv(hmd_path)
 
 
@@ -40,7 +41,7 @@ std_options <- c("Classic Lexis surface",
 color_options <- c("Black", "Grey", "White")
 gender_options <- c("Male", "Female")
 
-choose <- c("Male","Female")
+sexes <- c("Male","Female")
 export <- c("MALES","FEMALES")
 title <- c("Males","Females")
 

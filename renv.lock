@@ -300,6 +300,12 @@ Version=2.1.1
 Source=CRAN
 Hash=d1f21b8ced82ba581c26edfcc69d0c41
 
+[R/Package/here]
+Package=here
+Version=0.1
+Source=CRAN
+Hash=17102304d55b3242d6199cddc0fd79f7
+
 [R/Package/highr]
 Package=highr
 Version=0.8

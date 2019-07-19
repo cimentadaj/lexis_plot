@@ -33,23 +33,33 @@ server <- # Define server logic required to draw a histogram
       
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       
+      # TR: create country directory if it doesn't exist
+      xyzdir <- here("data",name_cou)
+      if (!file.exists(xyzdir)){
+        dir.create(xyzdir)
+      }
+      
+      popfile <- here("data",name_cou,"pop.rds")
+      if (!file.exists(popfile)){
       # Downloads the data from the Human Mortality
-      # database.
-      pop <-
-        readHMDweb(CNTRY = name_cou,
-                   item = "Population",
+      # database. TR: Need exposures for smoothing, so may
+      # as well use in same way as pop for scaling widths.
+        pop <- readHMDweb(
+                   CNTRY = name_cou,
+                   item = "cExposures_1x1",
                    username = id[1],
-                   password = id[2]) %>%
-        select(Year, Age, Female1, Male1, Total1) %>%
-        rename(Female = Female1,
-               Male = Male1,
-               Total = Total1) %>%
-        arrange(Year, Age)
-      
-      
+                   password = id[2])
       # This print is for the internal logs
       # of the app, for debugging purposes.
       print(paste("Downloaded", name_cou))
+      
+      # save out too
+      saveRDS(pop, file = popfile)
+      print(paste("Saved local copy to", popfile))
+      } else {
+        pop <- readRDS(popfile)
+      }
+      
       pop
     })
     
@@ -146,25 +156,30 @@ server <- # Define server logic required to draw a histogram
         selected_year   <- input$type_std
         stand_ind       <- 1
       }
-      
+      # TR: Shiny NOOB question:
+      # How come there's a pop function but not a cmx function?
       # Download data
       pop <- pop()
       
-      # Load mortality data for the same country data
-      cmx <-
-        readHMDweb(CNTRY = name_cou,
+      cmxfile <- here("data",name_cou,"cmx.rds")
+      if (!file.exists(cmxfile)){
+      # Load mortality data for the same country
+        cmx <- readHMDweb(
+                   CNTRY = name_cou,
                    item = "cMx_1x1",
                    username = id[1],
-                   password = id[2]) %>%
-        select(-OpenInterval)
-
+                   password = id[2]) 
+        saveRDS(cmx, file = cmxfile)
+      } else {
+        cmx <- readRDS(cmxfile)
+      }
       
       # Until this point we have all options ready and data
       # for mortality as well as cohort sizes.
       
       # Prepare both datasets together. The result is a pop_ch
       # data frame with all information.
-      source("aux_scripts/prepare_data.R", local = TRUE)
+      source(here("aux_scripts","prepare_data.R"), local = TRUE)
       
       
       too_big_cohort <- length(pop_ch[pop_ch$Cohort==selected_cohort&pop_ch$Age==0, ][ ,1]) == 0
@@ -185,7 +200,7 @@ server <- # Define server logic required to draw a histogram
       # which contains the color values for each of the values in
       # mortality as well as population, to feed into the graph
       # accordingly.
-      source("aux_scripts/define_color_width.R", local = TRUE)
+      source(here("aux_scripts","define_color_width.R"), local = TRUE)
       
       # Cohorts and ages
       coh <- as.numeric(unique(color_matrix[,"Cohort"]))
@@ -206,7 +221,7 @@ server <- # Define server logic required to draw a histogram
       
       # create_plot.R actually creates the complete plot.
       # It is a dense script which needs detaled attention.
-      source("aux_scripts/create_plot.R", local = TRUE)
+      source(here("aux_scripts","create_plot.R"), local = TRUE)
       create_plot(outfile)
     }
     

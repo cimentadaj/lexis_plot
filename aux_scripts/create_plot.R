@@ -55,7 +55,7 @@ create_plot <- function(outfile) {
   }
   if (var_of_int==2) {
     title(main=paste(title[ch]," in ", long_cnt_name, 
-                     " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[choose!=choose[ch]],"=100)",sep=""),
+                     " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[sexes!=sexes[ch]],"=100)",sep=""),
           col.main=axis_color)
   }
   if (var_of_int==3) {

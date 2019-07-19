@@ -32,11 +32,11 @@ matchvecmx  <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
 matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
 
 o1          <- match(matchvecpop,matchvecmx)
-csex        <- which(colnames(cmx)==choose[ch])
+csex        <- which(colnames(cmx)==sexes[ch])
 
 # Cohort mortality rates (magma colors)
 if (var_of_int==1) {
-  pop_ch$mx <- cmx[,choose[ch]][o1]
+  pop_ch$mx <- cmx[,sexes[ch]][o1]
   
   pop_ch <- filter(pop_ch, mx <= 1, mx != 0) # because log(0) is infinity
   
@@ -69,8 +69,8 @@ if (var_of_int==1) {
 
 # Gender differences in cohort mortality rates (ratio)
 if (var_of_int==2) {
-  pop_ch$mx1 <- cmx[,choose[ch]][o1]
-  pop_ch$mx2 <- cmx[,choose[which(choose!=choose[ch])]][o1]
+  pop_ch$mx1 <- cmx[,sexes[ch]][o1]
+  pop_ch$mx2 <- cmx[,sexes[which(sexes!=sexes[ch])]][o1]
   pop_ch$gendif <- pop_ch$mx1/pop_ch$mx2*100
   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
   
@@ -89,8 +89,8 @@ if (var_of_int==2) {
 
 # Gender differences in cohort mortality rates (difference)
 if (var_of_int==3) {
-  pop_ch$mx1 <- cmx[,choose[ch]][o1]
-  pop_ch$mx2 <- cmx[,choose[which(choose!=choose[ch])]][o1]
+  pop_ch$mx1 <- cmx[,sexes[ch]][o1]
+  pop_ch$mx2 <- cmx[,sexes[which(sexes!=sexes[ch])]][o1]
   pop_ch$gendif <- (pop_ch$mx1 - pop_ch$mx2)
   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
   
