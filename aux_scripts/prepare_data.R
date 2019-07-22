@@ -16,7 +16,8 @@ pop_long <-
   mutate(Pop = if_else(Pop == 0, 1e-10, Pop))
 
 # 2) prepare cmx same way as pop
-cmx <- cmx %>% 
+cmx <-
+  cmx %>% 
   select(-OpenInterval) %>% 
   rename(Cohort = Year) %>%
   mutate(Year = Cohort + Age) %>% 
@@ -37,7 +38,7 @@ pop_long <- pop_long %>%
   arrange(Year, Sex, Age) %>% 
   mutate(cDx = cmx * Pop) %>% 
   filter(Year <= (max(Cohort) + 30)) %>% 
-  # these lines cut on the left
+  ## these lines cut on the left
   group_by(Year) %>% 
   filter(!all(is.na(cmx))) %>% 
   ungroup()

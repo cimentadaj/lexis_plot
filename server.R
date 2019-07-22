@@ -34,12 +34,13 @@ server <- # Define server logic required to draw a histogram
       name_cou <- hmd_cou$IDs[hmd_cou$Name==input$country]
       
       # TR: create country directory if it doesn't exist
-      xyzdir <- here("data",name_cou)
+      xyzdir <- here("data", name_cou)
       if (!file.exists(xyzdir)){
         dir.create(xyzdir)
       }
       
       popfile <- here("data",name_cou,"pop.rds")
+
       if (!file.exists(popfile)){
       # Downloads the data from the Human Mortality
       # database. TR: Need exposures for smoothing, so may
@@ -162,6 +163,7 @@ server <- # Define server logic required to draw a histogram
       pop <- pop()
       
       cmxfile <- here("data",name_cou,"cmx.rds")
+
       if (!file.exists(cmxfile)){
       # Load mortality data for the same country
         cmx <- readHMDweb(
@@ -169,6 +171,7 @@ server <- # Define server logic required to draw a histogram
                    item = "cMx_1x1",
                    username = id[1],
                    password = id[2]) 
+
         saveRDS(cmx, file = cmxfile)
       } else {
         cmx <- readRDS(cmxfile)
