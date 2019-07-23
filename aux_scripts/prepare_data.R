@@ -4,8 +4,7 @@
 pop_long <- 
   pop %>%       # some data processing moved from server to here.
   select(Year, Age, Female, Male, Total) %>%
-  rename(Cohort = Year) %>%
-  mutate(Year = Cohort + Age) %>%
+  mutate(Cohort = Year - (Age-1)) %>% 
   arrange(Year, Age) %>% 
   gather(key = "Sex", 
          value = "Pop", 
@@ -32,16 +31,17 @@ cmx_long <-
   mutate(cmx = ifelse(cmx == 0, 0.0000000001, cmx))
   
 # Merge datasets
-pop_long <- pop_long %>% 
-  full_join(cmx_long, 
+pop_long <-
+  pop_long %>% 
+  left_join(cmx_long, 
             by = c("Cohort", "Age", "Year", "Sex")) %>% 
   arrange(Year, Sex, Age) %>% 
   mutate(cDx = cmx * Pop) %>% 
-  filter(Year <= (max(Cohort) + 30)) %>% 
+  filter(Year <= (max(Cohort) + 30))
   ## these lines cut on the left
-  group_by(Year) %>% 
-  filter(!all(is.na(cmx))) %>% 
-  ungroup()
+  ## group_by(Year) %>% 
+  ## filter(!all(is.na(cmx))) %>% 
+  ## ungroup()
 
 # ---------------------------------------------
 # TR: maybe this can be eliminated now:
@@ -139,7 +139,7 @@ pop_ch <- pop_ch %>%
           ungroup() %>% 
           mutate(relative_pop = 1)
 
-if (!no_stand){
+if (!no_stand) {
   # Probably one can program this better
   # Standardization by reference cohort
   if (!is.na(selected_cohort)) {
@@ -151,7 +151,7 @@ if (!no_stand){
   }
   # Standardization of each cohort with its maximum size 
   if (is.na(selected_cohort) & is.na(selected_year)) {
-    selected_max <- pop_ch$Maxpop
+    selected_max <- pop_ch$MaxPopCohorts
   }
 
   # The factor by which to standardize cohort lines.
@@ -168,9 +168,13 @@ if (!no_stand){
   }
 }
 
+# Match pop data to cmx data
+cmx$Age[is.na(cmx$Age)] <- 110
 
+cmx <- as_tibble(cmx)
 
-
-
-
-
+pop_ch <-
+  pop_ch %>%
+  mutate(Cohort = Cohort - 1) %>% 
+  left_join(cmx) %>%
+  rename(mx = sexes[ch])

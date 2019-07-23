@@ -23,21 +23,8 @@ magmaadjust <- function (n, alpha = 1, bins, option = "magma") {
   grDevices::rgb(cols[, 1], cols[, 2], cols[, 3], alpha = alpha)
 }
 
-# Match pop data to cmx data
-cmx$Age[is.na(cmx$Age)] <- 110
-
-# TR: this should happen using ..._join()
-# And that should be in prepare_data.R for use everywhere.
-matchvecmx  <- paste(c(cmx$Year+cmx$Age)+1,cmx$Age)
-matchvecpop <- paste(pop_ch$Year,pop_ch$Age)
-
-o1          <- match(matchvecpop,matchvecmx)
-csex        <- which(colnames(cmx)==sexes[ch])
-
 # Cohort mortality rates (magma colors)
 if (var_of_int==1) {
-  pop_ch$mx <- cmx[,sexes[ch]][o1]
-  
   pop_ch <- filter(pop_ch, mx <= 1, mx != 0) # because log(0) is infinity
   
   # The colbins to extract colors from the magmafunction are derived
