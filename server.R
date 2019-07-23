@@ -47,13 +47,15 @@ server <- # Define server logic required to draw a histogram
       # as well use in same way as pop for scaling widths.
         pop <- readHMDweb(
                    CNTRY = name_cou,
-                   item = "cExposures_1x1",
+                   item = "Exposures_1x1",
                    username = id[1],
-                   password = id[2])
+                   password = id[2]
+        )
+
       # This print is for the internal logs
       # of the app, for debugging purposes.
-      print(paste("Downloaded", name_cou))
-      
+        print(paste("Downloaded", name_cou))
+
       # save out too
       saveRDS(pop, file = popfile)
       print(paste("Saved local copy to", popfile))
