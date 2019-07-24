@@ -47,7 +47,7 @@ server <- # Define server logic required to draw a histogram
       # as well use in same way as pop for scaling widths.
         pop <- readHMDweb(
                    CNTRY = name_cou,
-                   item = "Exposures_1x1",
+                   item = "cExposures_1x1",
                    username = id[1],
                    password = id[2]
         )
