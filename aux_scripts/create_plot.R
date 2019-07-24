@@ -45,7 +45,8 @@ create_plot <- function(outfile) {
        ylab="Age",
        xlab="Year",
        col.lab=axis_color,
-       xaxt = "n")
+       xaxt = "n",
+       asp = 1)
   
   axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color,fg=backgr_color)
   
