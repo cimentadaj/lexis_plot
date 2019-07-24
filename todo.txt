@@ -5,17 +5,21 @@ plot which is empty
 TR: note this is due to missing data during WWI. Data for those years in HMD consist in NAs.
 [X] - Test that the app works in the shiny server because it was
 crashing for Sebastian for some reason.
+
 [ ] - Choose Israel + Standardize relative to cohort = It throws the please choose a cohort that is observer. This should be shown as a warning in the menu before the plot is made.
+
 [ ] - Implement username/password credentials in app to avoid having our own HMD credentials uploaded.
 
 TR added
 [ ] - Implement palette selection from colorspace package
-[ ] - fix: all plots should have aspect ratio of 1
+
+[X] - fix: all plots should have aspect ratio of 1
 [ ] - scale palette to given value range (sliders), using solid color endpoints for lower and upper intervals. This would enhance the diagnostic value of the app.
-[ ] - add note to interface when doing sex ratios or similar that the selected sex refers to the numerator
+
+[X] - add note to interface when doing sex ratios or similar that the selected sex refers to the numerator
+Hmm, this is already in the legend of the plot. When you do ratios (e.g), it says Males/Females (by default Male is always chosen)
 [ ] - shrink_factor can be user specified, with present value of .9 as default.
+
 [X] - I see pop and cmx are downloaded each time server is updated? Is that the case? In that case maybe good to store local copy of original file on first download, saving it in data/ and reading it in using 
 HMDHFDplus::readHMD(here("data","name_cou","Population.txt")), or maybe better saving it as Population.rds... and cMx.rds
-
-
 

@@ -56,9 +56,8 @@ if (var_of_int==1) {
 
 # Gender differences in cohort mortality rates (ratio)
 if (var_of_int==2) {
-  pop_ch$mx1 <- cmx[,sexes[ch]][o1]
-  pop_ch$mx2 <- cmx[,sexes[which(sexes!=sexes[ch])]][o1]
-  pop_ch$gendif <- pop_ch$mx1/pop_ch$mx2*100
+  non_chosen_sex <- setdiff(sexes, sexes[ch])
+  pop_ch$gendif <- pop_ch$mx / pop_ch[[non_chosen_sex]] * 100
   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
   
   pal <- rev(brewer.pal(11,"PRGn"))
@@ -76,9 +75,8 @@ if (var_of_int==2) {
 
 # Gender differences in cohort mortality rates (difference)
 if (var_of_int==3) {
-  pop_ch$mx1 <- cmx[,sexes[ch]][o1]
-  pop_ch$mx2 <- cmx[,sexes[which(sexes!=sexes[ch])]][o1]
-  pop_ch$gendif <- (pop_ch$mx1 - pop_ch$mx2)
+  non_chosen_sex <- setdiff(sexes, sexes[ch])
+  pop_ch$gendif <- (pop_ch$mx - pop_ch[[non_chosen_sex]])
   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
   
   pal <- rev(brewer.pal(11,"PRGn"))
@@ -94,14 +92,12 @@ if (var_of_int==3) {
   catg <- classIntervals(pop_ch$gendif, fixedBreaks=bins,
                          style = "fixed")
   pop_ch$color <- findColours(catg, colpal)
-  print(catg)
-  print(tail(pop_ch))
 }   
 
 # First order differences
 if (var_of_int==4) {
-  mincoh <- min(cmx$Year)
-  maxcoh <- max(cmx$Year)
+  mincoh <- min(pop_ch$Year)
+  maxcoh <- max(pop_ch$Year)
   rangecoh <- mincoh:maxcoh
   # Length, if we take first order differences
   l_fod <- length(rangecoh) - 1
@@ -110,21 +106,21 @@ if (var_of_int==4) {
   reslist <- list()
   
   for (i in 1:l_fod) {
-    cmx_tm1 <- log(cmx[cmx$Year==rangecoh[i],]) 
-    cmx_t <- log(cmx[cmx$Year==rangecoh[i+1],]) 
-    fod <- cmx_t[[csex]]-cmx_tm1[[csex]]
+    cmx_tm1 <- filter(pop_ch, Year == rangecoh[i])
+    cmx_t <- filter(pop_ch, Year == rangecoh[i + 1])
+    cmx_t <- semi_join(cmx_t, cmx_tm1, by = "Age")
+    cmx_tm1 <- semi_join(cmx_tm1, cmx_t, by = "Age")
+
+    fod <- log(cmx_t[[sexes[ch]]]) - log(cmx_tm1[[sexes[ch]]])
+
     fod[fod==Inf] <- NA
-    reslist[[i]] <- data.frame(Year = cmx[cmx$Year==rangecoh[i+1], "Year"],
-                               Age = cmx[cmx$Year==rangecoh[i+1], "Age"])
-    reslist[[i]][colnames(cmx)[csex]] <- fod
+    reslist[[i]] <- cmx_t %>% select(Year, Age) %>% mutate(!!sexes[ch] := fod)
   }
   
-  cmx_new <- bind_rows(reslist)
-  mat1 <- paste(pop_ch$Cohort,pop_ch$Age)
-  mat2 <- paste(cmx_new$Year,cmx_new$Age)
-  o <- match(mat1,mat2)
-  pop_ch$change <- cmx_new[,3][o]
-  pop_ch$change[pop_ch$change==-Inf] <- NA
+  cmx_new <- bind_rows(reslist) %>% rename(change = !!sym(sexes[ch]))
+  pop_ch <- left_join(pop_ch, cmx_new, by = c("Year", "Age"))
+  pop_ch$change[pop_ch$change==-Inf] <- NA  
+
 
   pal <- rev(brewer.pal(11,"PRGn"))
   if (backgr_color=="black") {
@@ -132,6 +128,7 @@ if (var_of_int==4) {
   } else{
     colramp <- colorRampPalette(c(pal[1],pal[2],"grey85",pal[10],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)     
   }
+
   colpal <- colramp(200)
   bins <- c(min(pop_ch$change,na.rm=T),
             seq(-0.495,0.495,0.005),

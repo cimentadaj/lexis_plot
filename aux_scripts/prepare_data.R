@@ -1,10 +1,9 @@
-
 # TR: replaced w tidy expression
 # 1) prepare Population (now exposures)
 pop_long <- 
   pop %>%       # some data processing moved from server to here.
   select(Year, Age, Female, Male, Total) %>%
-  mutate(Cohort = Year - (Age-1)) %>% 
+  mutate(Cohort = Year - Age) %>% 
   arrange(Year, Age) %>% 
   gather(key = "Sex", 
          value = "Pop", 
@@ -32,16 +31,15 @@ cmx_long <-
   
 # Merge datasets
 pop_long <-
-  pop_long %>% 
+  pop_long %>%
   left_join(cmx_long, 
             by = c("Cohort", "Age", "Year", "Sex")) %>% 
   arrange(Year, Sex, Age) %>% 
   mutate(cDx = cmx * Pop) %>% 
-  filter(Year <= (max(Cohort) + 30))
-  ## these lines cut on the left
-  ## group_by(Year) %>% 
-  ## filter(!all(is.na(cmx))) %>% 
-  ## ungroup()
+  filter(Year <= (max(Cohort) + 30)) %>% 
+  group_by(Year) %>% 
+  filter(!all(is.na(cmx))) %>% 
+  ungroup()
 
 # ---------------------------------------------
 # TR: maybe this can be eliminated now:
@@ -53,7 +51,9 @@ time1 <- if_else(time[1] > 1920, 1920L, time[1])
 time2 <- time[length(time)]
 
 # TR: had to move this here
-if (smoothmx){
+if (input$smoothmx) {
+
+  print("Smoothing applied")
   # TR: now all work happens in pop_long
   # pop_long will contain smoothed cmx if this is run.
   # in order to keep everything happy downstream cmx
@@ -68,27 +68,29 @@ if (smoothmx){
     # never smooth infants, too sharp
     w[1:2] <- 0
     suppressWarnings(
-    cmxs <- exp(Mort1Dsmooth(x = x, 
-                         y = y,
-                         offset = off,
-                         w = w,
-                         method = 3,
-                         lambda = lambda)$logmortality))
+      cmxs <- exp(Mort1Dsmooth(x = x, 
+                               y = y,
+                               offset = off,
+                               w = w,
+                               method = 3,
+                               lambda = lambda)$logmortality)
+    )
+
     ind      <- !is.na(y) 
     ind[1:2] <- FALSE
     mx[ind] <- cmxs[ind]
     mx
   }
   
-  # for (yr in unique(pop_long$Year)){
-  #   cat(yr,"\n")
-  #   chunk <- filter(pop_long, Year == 1960 & Sex == "Male")
-  #   smoothyr(x = chunk$Age, 
-  #            y =  chunk$cDx, 
-  #            p =  chunk$Pop, 
-  #            mx =  chunk$cmx, 
-  #            lambda = 1)
-  # }
+  ## for (yr in unique(pop_long$Year)){
+  ##   cat(yr,"\n")
+  ##   chunk <- filter(pop_long, Year == yr & Sex == "Male")
+  ##   smoothyr(x = chunk$Age, 
+  ##            y =  chunk$cDx, 
+  ##            p =  chunk$Pop, 
+  ##            mx =  chunk$cmx, 
+  ##            lambda = 1)
+  ## }
 
   pop_long <-
     pop_long %>% 
@@ -103,12 +105,13 @@ if (smoothmx){
   # where < 18 not exposed and >= 18 have excess.
   
   # remake cmx
-  cmx <- pop_long %>% 
+  cmx <-
+    pop_long %>% 
     select(Cohort, Age, Year, Sex, cmx) %>% 
     spread(Sex, cmx) %>% 
     # re-attach NAs from cmx...
-    anti_join(cmx, ., by = c("Cohort", "Age")) %>% 
-    bind_rows(test) %>% 
+    ## anti_join(cmx, ., by = c("Cohort", "Age")) %>% 
+    ## bind_rows(test) %>% 
     arrange(Year, Age) %>% 
     # arrange columns
     select(Cohort, Age, Year, Female, Male, Total) 
@@ -132,7 +135,7 @@ if (!is.na(selected_cohort) | !is.na(selected_year | no_stand)) {
   pop_ch <- filter(pop_long, Cohort >= time1, Cohort <= time2, Sex == sexes[ch])
   cmx    <- filter(cmx, Year >= time1, Year <= time2)
 }
-
+ 
 pop_ch <- pop_ch %>% 
           group_by(Cohort) %>% 
           mutate(MaxPopCohorts = max(Pop)) %>% 
@@ -175,6 +178,6 @@ cmx <- as_tibble(cmx)
 
 pop_ch <-
   pop_ch %>%
-  mutate(Cohort = Cohort - 1) %>% 
   left_join(cmx) %>%
-  rename(mx = sexes[ch])
+  mutate(mx = !!sym(sexes[ch]))
+
