@@ -14,7 +14,7 @@ TR added
 [ ] - scale palette to given value range (sliders), using solid color endpoints for lower and upper intervals. This would enhance the diagnostic value of the app.
 [ ] - add note to interface when doing sex ratios or similar that the selected sex refers to the numerator
 [ ] - shrink_factor can be user specified, with present value of .9 as default.
-[ ] - I see pop and cmx are downloaded each time server is updated? Is that the case? In that case maybe good to store local copy of original file on first download, saving it in data/ and reading it in using 
+[x] - I see pop and cmx are downloaded each time server is updated? Is that the case? In that case maybe good to store local copy of original file on first download, saving it in data/ and reading it in using 
 HMDHFDplus::readHMD(here("data","name_cou","Population.txt")), or maybe better saving it as Population.rds... and cMx.rds
 
 
