@@ -105,13 +105,17 @@ if (input$smoothmx) {
   # where < 18 not exposed and >= 18 have excess.
   
   # remake cmx
-  cmx <-
-    pop_long %>% 
+  cmx1 <- pop_long %>% 
     select(Cohort, Age, Year, Sex, cmx) %>% 
-    spread(Sex, cmx) %>% 
-    # re-attach NAs from cmx...
-    ## anti_join(cmx, ., by = c("Cohort", "Age")) %>% 
-    ## bind_rows(test) %>% 
+    spread(Sex, cmx) 
+  
+  # TR
+  # anti_join: keeps NAs from cmx not present in cmx1.
+  # then we add on values from cmx1 to replace those of cmx2.
+  # is there a better way to join with this result?
+  cmx <- anti_join(cmx, cmx1, by = c("Cohort", "Age")) %>% 
+    mutate(Year = Cohort + Age) %>% 
+    bind_rows(cmx1) %>% 
     arrange(Year, Age) %>% 
     # arrange columns
     select(Cohort, Age, Year, Female, Male, Total) 
