@@ -43,10 +43,13 @@ ui <- tabsetPanel(
            fluidPage(
              fluidRow(column(4, uiOutput('indicator')),
                       column(5, uiOutput('country')),
-                      column(3, uiOutput('gender'))),
+                      column(3, uiOutput('gender'))
+                      ),
              fluidRow(column(4, uiOutput('color')),
                       column(5, uiOutput('std')),
-                      column(3, uiOutput('type_std'))),
+                      column(3, uiOutput('type_std'))
+                      ),
+             fluidRow(column(3, uiOutput('smoothmx'))),
              actionButton("make_plot", "Create plot"),
              hr(), # withspinner is to have a nice spinning loading bar when graph is recalculated.
              fluidRow(

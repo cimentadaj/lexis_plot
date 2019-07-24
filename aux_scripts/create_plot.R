@@ -45,7 +45,8 @@ create_plot <- function(outfile) {
        ylab="Age",
        xlab="Year",
        col.lab=axis_color,
-       xaxt = "n")
+       xaxt = "n",
+       asp = 1)
   
   axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color,fg=backgr_color)
   
@@ -55,7 +56,7 @@ create_plot <- function(outfile) {
   }
   if (var_of_int==2) {
     title(main=paste(title[ch]," in ", long_cnt_name, 
-                     " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[choose!=choose[ch]],"=100)",sep=""),
+                     " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[sexes!=sexes[ch]],"=100)",sep=""),
           col.main=axis_color)
   }
   if (var_of_int==3) {
