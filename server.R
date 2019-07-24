@@ -87,7 +87,14 @@ server <- # Define server logic required to draw a histogram
       selectInput("std", label = "Type of line width",
                   choices = std_options)
     })
-    
+
+    output$smoothmx <- renderUI({
+      radioButtons("smoothmx",
+                   label = "Apply smoothing",
+                   choices = c("No" = FALSE, "Yes" = TRUE),
+                   selected = FALSE)
+    })
+
     # After downloading the data, figure out the range
     # in years for that given country. This is shown
     # in the relative width option in the menu.

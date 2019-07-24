@@ -47,8 +47,3 @@ title <- c("Males","Females")
 
 ## Add save plot button
 align <- "justify"
-
-# -------------------------------
-# TR: make this an option set in server.R
-smoothmx <- FALSE
-# -------------------------------
