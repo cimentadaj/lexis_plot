@@ -150,3 +150,6 @@ width_matrix <-
   select(Cohort, Age, relative_pop) %>%
   spread(Age, relative_pop) %>%
   as.matrix()
+
+print("test4:")
+print(tail(color_matrix))

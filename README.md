@@ -51,44 +51,44 @@ To reproduce the plots in the paper 'Exploring the Demographic History of Popula
 
 1) Load the Shiny app by following the first section in this document (or just look at deployed application [here](https://cimentadaj.shinyapps.io/enhanced_lexis_plot/)).
 
-2) Steps to reproduce figure 1:
+2) Steps to reproduce figure 2:
   + Choose Sweden in option 'Select country'
   + Select background color as 'White'
   + Click on 'Create plot'
 
-3) Steps to reproduce figure 2:
+3) Steps to reproduce figure 3:
   + Choose Sweden in option 'Select country'
   + Select background color as 'White'
   + Set option 'Type of line width' to 'Standardize cohort by itself'
   + Click on 'Create plot'
 
-4) Steps to reproduce figure 3:
+4) Steps to reproduce figure 4:
   + Choose France in option 'Select country'
   + Select background color as 'White'
   + Set option 'Type of line width' to 'Classic Lexis Surface'
   + Click on 'Create plot'
   
-5) Steps to reproduce figure 4a:
+5) Steps to reproduce figure 5a:
   + Choose France in option 'Select country'
   + Select background color as 'White'
   + Set option 'Type of line width' to 'Standardize cohort by itself'
   + Click on 'Create plot'
   
-5) Steps to reproduce figure 4b:
+5) Steps to reproduce figure 5b:
   + Choose France in option 'Select country'
   + Select background color as 'White'
   + Set option 'Type of line width' to 'Standardize relative to cohort'
   + Set option 'Line width relative to which year' to 1960
   + Click on 'Create plot'
   
-6) Steps to reproduce figure 5:
+6) Steps to reproduce figure 6:
   + Choose USA in option 'Select country'
   + Select background color as 'White'
   + Set 'Select indicator' to 'First order differences in cohort mortality rates'
   + Set option 'Type of line width' to 'Classic Lexis Surface'
   + Click on 'Create plot'
 
-7) Steps to reproduce figure 6:
+7) Steps to reproduce figure 7:
   + Choose USA in option 'Select country'
   + Select background color as 'White'
   + Set 'Select indicator' to 'First order differences in cohort mortality rates'

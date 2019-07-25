@@ -21,6 +21,7 @@ cmx <-
   mutate(Year = Cohort + Age) %>% 
   arrange(Year, Age) %>% 
   filter(Age <= 100)
+
  
 cmx_long <- 
   cmx %>%
@@ -41,6 +42,9 @@ pop_long <-
   filter(!all(is.na(cmx))) %>% 
   ungroup()
 
+print("test1:")
+print(tail(pop_long))
+
 # ---------------------------------------------
 # TR: maybe this can be eliminated now:
 gender      <- sexes[ch]
@@ -49,6 +53,9 @@ cmx[gender] <- if_else(cmx[[gender]] == 0, 0.0000000001, cmx[[gender]])
 time  <- sort(unique(pop_long$Year))
 time1 <- if_else(time[1] > 1920, 1920L, time[1])
 time2 <- time[length(time)]
+print("Time")
+print(time1)
+print(time2)
 
 # TR: had to move this here
 if (input$smoothmx) {
@@ -142,9 +149,14 @@ if (!is.na(selected_cohort) | !is.na(selected_year | no_stand)) {
  
 pop_ch <- pop_ch %>% 
           group_by(Cohort) %>% 
-          mutate(MaxPopCohorts = max(Pop)) %>% 
+          mutate(MaxPopCohorts = max(Pop, na.rm = TRUE)) %>% 
           ungroup() %>% 
           mutate(relative_pop = 1)
+
+
+print("test2:")
+print(tail(pop_ch))
+
 
 if (!no_stand) {
   # Probably one can program this better
@@ -184,4 +196,8 @@ pop_ch <-
   pop_ch %>%
   left_join(cmx) %>%
   mutate(mx = !!sym(sexes[ch]))
+
+print("test3:")
+print(head(pop_ch))
+print(tail(pop_ch))
 

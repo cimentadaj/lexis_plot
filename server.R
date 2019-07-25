@@ -41,16 +41,20 @@ server <- # Define server logic required to draw a histogram
       
       popfile <- here("data",name_cou,"pop.rds")
 
+      print("Name")
+      print(name_cou)
+
       if (!file.exists(popfile)){
       # Downloads the data from the Human Mortality
       # database. TR: Need exposures for smoothing, so may
       # as well use in same way as pop for scaling widths.
         pop <- readHMDweb(
                    CNTRY = name_cou,
-                   item = "cExposures_1x1",
+                   item = "Exposures_1x1",
                    username = id[1],
                    password = id[2]
         )
+
 
       # This print is for the internal logs
       # of the app, for debugging purposes.
@@ -179,7 +183,8 @@ server <- # Define server logic required to draw a histogram
                    CNTRY = name_cou,
                    item = "cMx_1x1",
                    username = id[1],
-                   password = id[2]) 
+                   password = id[2]
+        ) 
 
         saveRDS(cmx, file = cmxfile)
       } else {

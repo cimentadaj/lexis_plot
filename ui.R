@@ -31,8 +31,9 @@ ui <- tabsetPanel(
                          img(src = "example_lexis.png", width = 900, height = 600, align = align),
                          br(), br(), br(),
                          p("Created and implemented by",
-                           a("Sebastian Kluesener", href = "https://twitter.com/demomapper"), "and",
-                           a("Jorge Cimentada", href = "https://cimentadaj.github.io/"), align = align),
+                           a("Sebastian Kluesener", href = "https://twitter.com/demomapper"), ",",
+                           a("Jorge Cimentada", href = "https://cimentadaj.github.io/"), "and",
+                           a("Tim Riffe", href = "https://sites.google.com/site/timriffepersonal/"), align = align),                         
                          br(),
                          actionButton("graph_tab", "Click here to access your countries' plot.", icon = icon("flag")), align = align)),
                      tags$style("body {background-color: #000000;}")
