@@ -1,8 +1,11 @@
+[X] - Fix problem with Belgium. 
+
 There is a problem with Belgium whenever you set the  mortality rates
 according to a given year, it has all missing values and produces a
 plot which is empty
-[X] - Fix problem with Belgium. 
+
 TR: note this is due to missing data during WWI. Data for those years in HMD consist in NAs.
+
 [X] - Test that the app works in the shiny server because it was
 crashing for Sebastian for some reason.
 
@@ -18,6 +21,7 @@ TR added
 
 [X] - add note to interface when doing sex ratios or similar that the selected sex refers to the numerator
 Hmm, this is already in the legend of the plot. When you do ratios (e.g), it says Males/Females (by default Male is always chosen)
+
 [ ] - shrink_factor can be user specified, with present value of .9 as default.
 
 [X] - I see pop and cmx are downloaded each time server is updated? Is that the case? In that case maybe good to store local copy of original file on first download, saving it in data/ and reading it in using 
