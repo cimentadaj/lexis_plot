@@ -100,7 +100,9 @@ To reproduce the plots in the paper 'Exploring the Demographic History of Popula
 
 If you want to deploy the application on your own server, then run the code below
 
-`files_keep <- c("aux_scripts", "data", "global.R", "id.txt", "README.md", "server.R", "ui.R", "www")`
-`deployApp(appFiles = files_keep)`
+```
+files_keep <- c("aux_scripts", "data", "global.R", "id.txt", "README.md", "server.R", "ui.R", "www")
+deployApp(appFiles = files_keep)
+```
 
 Since we have the `renv` package which saves a copy of all of your libraries, you have to limit the number of files to not crash shiny.
