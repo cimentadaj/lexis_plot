@@ -61,7 +61,7 @@ create_plot <- function(outfile) {
   }
   if (var_of_int==3) {
     title(main=paste(title[ch]," in ", long_cnt_name, 
-                     " - Cohort Mortality Rates difference between current and preceding year (difference in deaths per 1000 persons)",sep=""),
+                     " - Cohort Mortality Rates Percentage Change between Current and Preceding Year \n (log-scaled absolute difference in deaths per 1000 persons)",sep=""),
           col.main=axis_color)
   }
   if (var_of_int==4) {
