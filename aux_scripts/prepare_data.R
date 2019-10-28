@@ -83,7 +83,7 @@ if (input$smoothmx) {
                                lambda = lambda)$logmortality)
     )
 
-    ind      <- !is.na(y) 
+    ind      <- !(is.na(y) | is.na(off))
     ind[1:2] <- FALSE
     mx[ind] <- cmxs[ind]
     mx
