@@ -71,7 +71,7 @@ if (input$smoothmx) {
   # chunk <- filter(pop_long, Sex == "Male" & Year == 1921)
   smoothyr <- function(x,y,p,mx,lambda = 1){
     off  <- log(p)
-    w    <- ifelse(is.na(y) | y == 0, 0, 1)
+    w    <- ifelse(is.na(y) | y == 0 | is.na(off), 0, 1)
     # never smooth infants, too sharp
     w[1:2] <- 0
     suppressWarnings(
@@ -83,7 +83,7 @@ if (input$smoothmx) {
                                lambda = lambda)$logmortality)
     )
 
-    ind      <- !is.na(y) 
+    ind      <- !(is.na(y) | is.na(off))
     ind[1:2] <- FALSE
     mx[ind] <- cmxs[ind]
     mx
