@@ -66,7 +66,6 @@ server <- # Define server logic required to draw a histogram
       print(paste("Saved local copy to", popfile))
       } else {
         pop <- readRDS(popfile)
-        pop$Year <- pop$Year + pop$Age        
       }
       
       pop
