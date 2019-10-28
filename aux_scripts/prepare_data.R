@@ -10,7 +10,6 @@ pop_long <-
          Female:Total) %>% 
   # subset to ages <= 100
   filter(Age <= 100) %>% 
-  # Derive cohort data (Population on  January 1st)
   mutate(Pop = if_else(Pop == 0, 1e-10, Pop))
 
 # 2) prepare cmx same way as pop
