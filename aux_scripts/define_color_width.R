@@ -78,7 +78,7 @@ if (var_of_int==2) {
 ##   non_chosen_sex <- setdiff(sexes, sexes[ch])
 ##   pop_ch$gendif <- (pop_ch$mx - pop_ch[[non_chosen_sex]])
 ##   pop_ch$gendif[pop_ch$gendif==Inf] <- NA
-  
+
 ##   pal <- rev(brewer.pal(11,"PRGn"))
 ##   if (backgr_color=="black") {
 ##     colramp <- colorRampPalette(c(pal[1],pal[6],pal[11]),bias=1,space="rgb",interpolate="linear",alpha=F)

@@ -81,6 +81,12 @@ Version=2.3.4
 Source=CRAN
 Hash=f387d279e208dd7a3b1d03cdb4175227
 
+[R/Package/MuMIn]
+Package=MuMIn
+Version=1.43.6
+Source=CRAN
+Hash=9cd6f7a58c971ff2aaa3143f599bad57
+
 [R/Package/R6]
 Package=R6
 Version=2.4.0
@@ -388,6 +394,12 @@ Package=ggplot2
 Version=3.2.0
 Source=CRAN
 Hash=e3b95a7458944efa0ebbb903bcdbe168
+
+[R/Package/ggthemes]
+Package=ggthemes
+Version=4.2.0
+Source=CRAN
+Hash=bc3e11207ac8dc4df1532663c4cf6a7a
 
 [R/Package/gh]
 Package=gh
@@ -1067,6 +1079,12 @@ RemoteRepos=https://cloud.r-project.org
 RemotePkgType=source
 RemoteSha=0.3.0
 Hash=1f264fa42320c4f44b1689d89101e823
+
+[R/Package/visreg]
+Package=visreg
+Version=2.5-1
+Source=CRAN
+Hash=dae8649511fdbdfe145fb6e89716ff66
 
 [R/Package/whisker]
 Package=whisker

@@ -19,6 +19,20 @@ shrink_fun <- function(x, shrink, x_value = TRUE) {
   xman
 }
 
+makeFootnote <- function(footnoteText,
+                         size = .7,
+                         color= grey(.5)) {
+  library(grid)
+  pushViewport(viewport())
+  grid.text(label= footnoteText ,
+            x = unit(1,"npc") - unit(2, "mm"),
+            y= unit(1, "mm"),
+            just=c("right", "bottom"),
+            gp=gpar(cex= size, col=color))
+  popViewport()
+}
+
+
 
 create_plot <- function(outfile) {
   
@@ -26,8 +40,8 @@ create_plot <- function(outfile) {
   # of the user viewing the plot
   width  <- session$clientData$output_graph_width
   height <- session$clientData$output_graph_height
-  mysvgwidth <- width/96
-  mysvgheight <- height/96
+  mysvgwidth <- width/86
+  mysvgheight <- height/86
 
   svglite::svglite(outfile, width = mysvgwidth, height = mysvgheight)
   par(bg = backgr_color, mar=c(12, 4, 4, 2),fig=c(0,1,0,1))
@@ -151,7 +165,9 @@ create_plot <- function(outfile) {
          col.ticks = axis_color,
          col.axis=axis_color)
 
-    mtext(side=1, line=2, "Deaths per 1000", col=axis_color, font=2,cex=1)
+    mtext(side=3, line=0, "Deaths per 1000", col=axis_color, font=2,cex=1)
+    foot <- "The density curve in the legend treats each plotted Lexis Triangle as a unit of observation."
+    makeFootnote(foot, size = .9)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey95",lwd=1)
   }
@@ -199,7 +215,9 @@ create_plot <- function(outfile) {
     lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
     label_txt <- paste0("Ratio of deaths per 1000 by ",
                         input$gender, "/", setdiff(gender_options, input$gender))
-    mtext(side=1, line=2, label_txt, col=axis_color, font=2,cex=1)
+    mtext(side=3, line=0, label_txt, col=axis_color, font=2,cex=1)
+    foot <- "The density curve in the legend treats each plotted Lexis Triangle as a unit of observation."
+    makeFootnote(foot, size = .9)
   }
 
   ## if (var_of_int==3) {
@@ -282,9 +300,10 @@ create_plot <- function(outfile) {
          col=axis_color,col.ticks = axis_color,col.axis=axis_color)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey95",lwd=1)
-    mtext(side=1, line=2, "Percentage change in actual year relative to preceding year",
-          col=axis_color, font=2,cex=1)    
-    
+    mtext(side=3, line=0, "Percentage change in actual year relative to preceding year",
+          col=axis_color, font=2,cex=1)
+    foot <- "The density curve in the legend treats each plotted Lexis Triangle as a unit of observation."
+    makeFootnote(foot, size = .9)
   }
   
   dev.off()

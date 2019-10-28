@@ -39,7 +39,7 @@ server <- # Define server logic required to draw a histogram
         dir.create(xyzdir)
       }
       
-      popfile <- here("data",name_cou,"pop.rds")
+      popfile <- here("data", name_cou, "pop.rds")
 
       print("Name")
       print(name_cou)
@@ -50,10 +50,11 @@ server <- # Define server logic required to draw a histogram
       # as well use in same way as pop for scaling widths.
         pop <- readHMDweb(
                    CNTRY = name_cou,
-                   item = "Exposures_1x1",
+                   item = "cExposures_1x1",
                    username = id[1],
                    password = id[2]
         )
+        pop$Year <- pop$Year + pop$Age
 
 
       # This print is for the internal logs
@@ -65,6 +66,7 @@ server <- # Define server logic required to draw a histogram
       print(paste("Saved local copy to", popfile))
       } else {
         pop <- readRDS(popfile)
+        pop$Year <- pop$Year + pop$Age        
       }
       
       pop
