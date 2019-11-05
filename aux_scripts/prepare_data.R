@@ -1,5 +1,6 @@
 # TR: replaced w tidy expression
 # 1) prepare Population (now exposures)
+# TR: FYI input corrected Year in server.R
 pop_long <- 
   pop %>%       # some data processing moved from server to here.
   select(Year, Age, Female, Male, Total) %>%
@@ -13,6 +14,7 @@ pop_long <-
   mutate(Pop = if_else(Pop == 0, 1e-10, Pop))
 
 # 2) prepare cmx same way as pop
+# Input Year wasn't correct in server.R, so we do it here.
 cmx <-
   cmx %>% 
   select(-OpenInterval) %>% 
