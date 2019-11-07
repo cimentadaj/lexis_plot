@@ -54,6 +54,9 @@ server <- # Define server logic required to draw a histogram
                    username = id[1],
                    password = id[2]
         )
+        # in the cohort files, Year actually means cohort
+        # so we make this little adjustment for now to 
+        # correct it.
         pop$Year <- pop$Year + pop$Age
 
 
@@ -186,6 +189,8 @@ server <- # Define server logic required to draw a histogram
                    username = id[1],
                    password = id[2]
         ) 
+        # TR: NOTE, Year in this data means Cohort!!
+        # for exposures we changed it, but not here!
 
         saveRDS(cmx, file = cmxfile)
       } else {
