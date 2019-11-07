@@ -102,7 +102,7 @@ If you want to deploy the application on your own server, then run the code belo
 
 ```
 files_keep <- c("aux_scripts", "data", "global.R", "id.txt", "README.md", "server.R", "ui.R", "www")
-deployApp(appFiles = files_keep)
+rsconnect::deployApp(appFiles = files_keep)
 ```
 
 Since we have the `renv` package which saves a copy of all of your libraries, you have to limit the number of files to not crash shiny.
