@@ -108,7 +108,9 @@ server <- # Define server logic required to draw a histogram
     # in the relative width option in the menu.
     output$type_std <- renderUI({
       if (is.null(pop())) return()
-      ran <- range(pop()$Year, na.rm = TRUE, finite = TRUE)
+      print("Line width")
+      print(head(pop()))
+      ran <- range(pop()$Year - pop()$Age, na.rm = TRUE, finite = TRUE)
       print(ran)
       conditionalPanel(
         condition =
