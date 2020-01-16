@@ -55,32 +55,44 @@ create_plot <- function(outfile) {
        col.axis=axis_color,
        fg=backgr_color,
        font.lab=2,
-       cex.lab=1.2,
+       cex.lab=1.3,
        ylab="Age",
        xlab="Year",
        col.lab=axis_color,
-       xaxt = "n")
+       xaxt = "n",
+       yaxt = "n")
 
-  
-  axis(1, at = seq(time1, time2, 30), xlab = "Year", col.axis = axis_color,fg=backgr_color)
+  axis(2,
+       at = seq(min(ages), max(ages), 20),
+       xlab = "Age", col.axis = axis_color,fg=backgr_color,
+       cex.axis = 1.3)
+
+  axis(1,
+       at = seq(time1, time2, 30),
+       xlab = "Year", col.axis = axis_color,fg=backgr_color,
+       cex.axis = 1.3)
   
   if (var_of_int==1) {
     title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates",sep=""),
-          col.main=axis_color)
+          col.main=axis_color,
+          cex.main = 1.8)
   }
   if (var_of_int==2) {
     title(main=paste(title[ch]," in ", long_cnt_name, 
                      " - Cohort Mortality Rates in Comparison to Opposite Sex (",title[sexes!=sexes[ch]],"=100)",sep=""),
-          col.main=axis_color)
+          col.main=axis_color,
+          cex.main = 1.8)
   }
   if (var_of_int==3) {
     title(main=paste(title[ch]," in ", long_cnt_name, 
                      " - Cohort Mortality Growth Rate between Current and Preceding Year \n (log-scaled difference in deaths per 1000 persons)",sep=""),
-          col.main=axis_color)
+          col.main=axis_color,
+          cex.main = 1.8)
   }
   if (var_of_int==4) {
     title(main=paste(title[ch]," in ", long_cnt_name, " - Cohort Mortality Rates (log-scaled difference compared to preceding year)",sep=""),
-          col.main=axis_color)
+          col.main=axis_color,
+          cex.main = 1.8)
   }
 
   # Loop for cohorts
@@ -163,11 +175,12 @@ create_plot <- function(outfile) {
          labels=c(0,round(ab*1000,0)),
          col=axis_color,
          col.ticks = axis_color,
-         col.axis=axis_color)
+         col.axis=axis_color,
+         cex.axis = 1.3)
 
-    mtext(side=3, line=0, "Deaths per 1000", col=axis_color, font=2,cex=1)
+    mtext(side=3, line=0, "Deaths per 1000", col=axis_color, font=2,cex=1.5)
     foot <- "The density curve in the legend treats each plotted Lexis parallelogram as a unit of observation."
-    makeFootnote(foot, size = .9)
+    makeFootnote(foot, size = 1.4)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$mx,na.rm = TRUE), col="grey95",lwd=1)
   }
@@ -215,9 +228,9 @@ create_plot <- function(outfile) {
     lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
     label_txt <- paste0("Ratio of deaths per 1000 by ",
                         input$gender, "/", setdiff(gender_options, input$gender))
-    mtext(side=3, line=0, label_txt, col=axis_color, font=2,cex=1)
+    mtext(side=3, line=0, label_txt, col=axis_color, font=2,cex=1.5)
     foot <- "The density curve in the legend treats each plotted Lexis parallelogram as a unit of observation."
-    makeFootnote(foot, size = .9)
+    makeFootnote(foot, size = 1.4)
   }
 
   ## if (var_of_int==3) {
@@ -260,7 +273,7 @@ create_plot <- function(outfile) {
   ##           input$gender, "-", setdiff(gender_options, input$gender),
   ##           " difference in deaths per 1000 persons"
   ##         ),
-  ##         col=axis_color, font=2,cex=1)
+  ##         col=axis_color, font=2,cex=1.5)
     
   ##   lines(density(pop_ch$gendif,na.rm = TRUE), col="grey5",lwd=2)
   ##   lines(density(pop_ch$gendif,na.rm = TRUE), col="grey95",lwd=1)
@@ -301,9 +314,9 @@ create_plot <- function(outfile) {
     lines(density(pop_ch$change,na.rm = TRUE), col="grey5",lwd=2)
     lines(density(pop_ch$change,na.rm = TRUE), col="grey95",lwd=1)
     mtext(side=3, line=0, "Growth rate in percentage from actual year relative to preceding year",
-          col=axis_color, font=2,cex=1)
+          col=axis_color, font=2,cex=1.1)
     foot <- "The density curve in the legend treats each plotted Lexis parallelogram as a unit of observation."
-    makeFootnote(foot, size = .9)
+    makeFootnote(foot, size = 1.4)
   }
   
   dev.off()
