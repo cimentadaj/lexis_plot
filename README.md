@@ -1,6 +1,6 @@
 ## Reproduction
 
-This is the code to reproduce the plots in the paper 'Exploring the Demographic History of Populations with Enhanced Lexis Surfaces' from Jorge Cimentada, Sebastian Klüsener and Tim Riffe. The pre-print can be accessed [here](https://osf.io/preprints/socarxiv/hxy7d/)
+This is the code to reproduce the paper *Cimentada, J., Klüsener, S. & Riffe, T. (2020). Exploring the demographic history of  populations with enhanced Lexis surfaces. Demographic Research, 42, 149-164*. The published article can be accessed [here](https://doi.org/10.4054/demres.2020.42.6) and the pre-print [here](https://osf.io/preprints/socarxiv/hxy7d/)
 
 You can view the Shiny application from the paper [here](https://cimentadaj.shinyapps.io/enhanced_lexis_plot/).
 
