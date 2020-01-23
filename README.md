@@ -22,8 +22,8 @@ password
 
 Saved as a text file. If you're forking this from Github, make sure that `id.txt` is included in `.gitignore` to avoid uploading your credentials to Github. It should be like this by default.
 
-3) Install the package `renv` for package management: `devtools::install_github("rstudio/renv")`
-4) Open an R session with the working directory set to the root of this cloned repository and run `renv::restore()` to install all packages automatically
+4) Open the file `lexis_plot.Rproj` if you're using Rstudio (this should install `renv`, the package manager, automatically). If using R without Rstudio, navigate to the repository root and run `source(".Rprofile")`
+4) Run `renv::init()` to install all packages automatically
 5) Run `shiny::runApp()` in R inside the main folder of the repository.
 
 This should open up the application.
