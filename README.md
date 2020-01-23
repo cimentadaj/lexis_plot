@@ -4,9 +4,13 @@ This is the code to reproduce the paper *Cimentada, J., Klüsener, S. & Riffe, T
 
 You can view the Shiny application from the paper [here](https://cimentadaj.shinyapps.io/enhanced_lexis_plot/).
 
-This application was designed and deployed using R version 3.6.2 in a 64-bit computer running Ubuntu 18.04.03 LTS.
+### Human Mortality Database
+
+The data used in the analysis comes from the Human Mortality Database (HMD) for all available country/years. The Human Mortality Database (HMD) contains original calculations of death rates and life tables for national populations (countries or areas), as well as the input data used in constructing those tables. The input data consist of death counts from vital statistics, plus census counts, birth counts, and population estimates from various sources [[1](https://www.mortality.org/Public/Overview.php)]. The data is queried automatically from the HMD database and uses the population exposure-to-risk data to regulate the size of the lexis parallelograms. To populate the intensity of each parallelogram, we use the death counts collected at the finest level of detail separate by male and females. This data is all contained in the HMD website and easily accesible with registration.
 
 ### Running the Shiny app
+
+This application was designed and deployed using R version 3.6.2 in a 64-bit computer running Ubuntu 18.04.03 LTS.
 
 This repository implements a R Shiny application to visualize enhanced lexis plots. To launch the Shiny app only a few steps are needed:
 
