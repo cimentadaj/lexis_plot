@@ -405,13 +405,6 @@
       "RemoteSha": "1.4",
       "Hash": "47db5d3cd9a56588a3140eb5716bd03e"
     },
-    "packrat": {
-      "Package": "packrat",
-      "Version": "0.5.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "aa1fbebb6ca276f933b9f77da6d02ef3"
-    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.4.2",
@@ -489,25 +482,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "5382761b8b318da6dd3fb0f6dae3c43a"
-    },
-    "rsconnect": {
-      "Package": "rsconnect",
-      "Version": "0.8.15",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "649b33e97eb02dc7f8533a50d888ae29"
-    },
-    "rstudioapi": {
-      "Package": "rstudioapi",
-      "Version": "0.10",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "RemoteType": "standard",
-      "RemoteRef": "rstudioapi",
-      "RemoteRepos": "https://cloud.r-project.org",
-      "RemotePkgType": "source",
-      "RemoteSha": "0.10",
-      "Hash": "04552808fd065fdf0fec7bad340eb83c"
     },
     "scales": {
       "Package": "scales",
@@ -696,18 +670,6 @@
       "RemotePkgType": "source",
       "RemoteSha": "1.8-4",
       "Hash": "48f60fcc0974ce72870076d48038df2d"
-    },
-    "yaml": {
-      "Package": "yaml",
-      "Version": "2.2.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "RemoteType": "standard",
-      "RemoteRef": "yaml",
-      "RemoteRepos": "https://cloud.r-project.org",
-      "RemotePkgType": "source",
-      "RemoteSha": "2.2.0",
-      "Hash": "3a313c96061c4ac790de611dc57ebd1f"
     },
     "zeallot": {
       "Package": "zeallot",
