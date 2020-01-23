@@ -4,13 +4,15 @@ This is the code to reproduce the paper *Cimentada, J., Klüsener, S. & Riffe, T
 
 You can view the Shiny application from the paper [here](https://cimentadaj.shinyapps.io/enhanced_lexis_plot/).
 
+This application was designed and deployed using R version 3.6.2 in a 64-bit computer running Ubuntu 18.04.03 LTS.
+
 ### Running the Shiny app
 
 This repository implements a R Shiny application to visualize enhanced lexis plots. To launch the Shiny app only a few steps are needed:
 
 0) Clone this repository with `git clone https://github.com/cimentadaj/lexis_plot.git`
 1) Register at the [Human Mortality Database website](https://www.mortality.org/mp/auth.pl).
-2) Save your credentials in a new file `id.txt` in the root of the repository where the first line is your email and the second line is your password
+2) Save your credentials in a new file `id.txt` in the **root** of the repository where the first line is your email and the second line is your password
 
 The file should be exactly like this:
 ```
@@ -18,7 +20,7 @@ your_email@email.com
 password
 ```
 
-Saved as a text file
+Saved as a text file. If you're forking this from Github, make sure that `id.txt` is included in `.gitignore` to avoid uploading your credentials to Github. It should be like this by default.
 
 3) Install the package `renv` for package management: `devtools::install_github("rstudio/renv")`
 4) Open an R session with the working directory set to the root of this cloned repository and run `renv::restore()` to install all packages automatically
@@ -105,4 +107,4 @@ files_keep <- c("aux_scripts", "data", "global.R", "id.txt", "README.md", "serve
 rsconnect::deployApp(appFiles = files_keep)
 ```
 
-Since we have the `renv` package which saves a copy of all of your libraries, you have to limit the number of files to not crash shiny.
+Since using the `renv` package saves a copy of all of your libraries, you have to limit the number of files to not crash shiny.

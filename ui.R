@@ -30,7 +30,7 @@ ui <- tabsetPanel(
                          p("We can see a graphical example here:", align = align),
                          img(src = "example_lexis.png", width = 900, height = 600, align = align),
                          br(), br(), br(),
-                         p("This work has been published as", a("Cimentada, J., Klüsener, S. & Riffe, T. (2020). Exploring the demographic history of populations with enhanced Lexis surfaces. Demographic Research, 42, 149-164.", href = "https://www.demographic-research.org/volumes/vol42/6/"),
+                         p("To cite this tool, please cite the official publication:", a("Cimentada, J., Klüsener, S. & Riffe, T. (2020). Exploring the demographic history of populations with enhanced Lexis surfaces. Demographic Research, 42, 149-164.", href = "https://www.demographic-research.org/volumes/vol42/6/"),
                            "To reproduce the material in this shiny application and the publication, please visit ", a("here.", href = "https://github.com/cimentadaj/lexis_plot"),
                            br(),
                            br(),
